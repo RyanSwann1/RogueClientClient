@@ -3,6 +3,20 @@
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 #include <thread>
+#include <deque> 
+
+struct ServerMessage
+{
+	ServerMessage(int clientID, PacketType packetType, sf::Vector2f position = sf::Vector2f())
+		: m_clientID(clientID),
+		m_packetType(packetType),
+		m_position(position)
+	{}
+
+	int m_clientID;
+	PacketType m_packetType;
+	sf::Vector2f m_position;
+};
 
 enum class PacketType
 {
@@ -30,6 +44,7 @@ public:
 
 private:
 	Level& m_level;
+	std::deque<ServerMessage> m_messageQueue;
 	sf::IpAddress m_serverIPAddress;
 	sf::TcpSocket m_tcpSocket;
 	sf::UdpSocket m_udpSocket;
@@ -39,6 +54,8 @@ private:
 	bool m_connected;
 	int m_clientID;
 
-	void listen();
+	
+
+	void listenForUDPMessages();
 	void listenForTCPMessages();
 };

@@ -170,6 +170,7 @@ int main()
 	Client client("192.168.0.14", 5030, level);
 	if (client.connectToServer())
 	{
+		
 		while (client.isConnected())
 		{
 			char d;

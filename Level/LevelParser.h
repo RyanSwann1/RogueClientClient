@@ -5,5 +5,5 @@
 class Level;
 namespace LevelParser
 {
-	//Level parseLevel(const std::string& levelName);
+	Level parseLevel(const std::string& levelName);
 }

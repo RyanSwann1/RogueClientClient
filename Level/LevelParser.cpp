@@ -1,8 +1,8 @@
 #include "LevelParser.h"
-#include "Utilities/Base64.h"
-#include "Utilities/tinyxml.h"
-#include "Level/Level.h"
-#include <assert.h>
+#include "../Utilities/Base64.h"
+#include "../Utilities/tinyxml.h"
+#include "Level.h"
+#include <cassert>
 
 std::vector<TileLayer> parseTileLayers(const TiXmlElement& rootElement, const LevelDetails& levelDetails);
 LevelDetails parseLevelDetails(const TiXmlElement& rootElement);
@@ -11,21 +11,21 @@ std::unordered_map<std::string, TileSheet> parseTileSheets(const TiXmlElement& r
 std::vector<sf::Vector2f> parseEntities(const TiXmlElement & rootElement, int tileSize);
 std::vector<sf::FloatRect> parseCollisionLayer(const TiXmlElement & rootElement, int tileSize);
 
-//Level LevelParser::parseLevel(const std::string& levelName)
-//{
-//	TiXmlDocument mapFile;
-//	bool mapLoaded = mapFile.LoadFile(levelName);
-//	assert(mapLoaded);
-//
-//	const auto& rootElement = mapFile.RootElement();
-//	LevelDetails levelDetails = parseLevelDetails(*rootElement);
-//	std::vector<TileLayer> tileLayers = parseTileLayers(*rootElement, levelDetails);
-//	std::unordered_map<std::string, TileSheet> tileSheets = parseTileSheets(*rootElement);
-//	std::vector<sf::FloatRect> collisionLayer = parseCollisionLayer(*rootElement, levelDetails.m_tileSize);
-//	std::vector<sf::Vector2f> entities = parseEntities(*rootElement, levelDetails.m_tileSize);
-//	
-//	//return Level();
-//}
+Level LevelParser::parseLevel(const std::string& levelName)
+{
+	TiXmlDocument mapFile;
+	bool mapLoaded = mapFile.LoadFile(levelName);
+	assert(mapLoaded);
+
+	const auto& rootElement = mapFile.RootElement();
+	LevelDetails levelDetails = parseLevelDetails(*rootElement);
+	std::vector<TileLayer> tileLayers = parseTileLayers(*rootElement, levelDetails);
+	std::unordered_map<std::string, TileSheet> tileSheets = parseTileSheets(*rootElement);
+	std::vector<sf::FloatRect> collisionLayer = parseCollisionLayer(*rootElement, levelDetails.m_tileSize);
+	std::vector<sf::Vector2f> entities = parseEntities(*rootElement, levelDetails.m_tileSize);
+	
+	//return Level();
+}
 
 std::vector<sf::FloatRect> parseCollisionLayer(const TiXmlElement & rootElement, int tileSize)
 {

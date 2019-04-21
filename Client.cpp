@@ -116,7 +116,6 @@ void Client::listenForUDPMessages()
 			
 			break;
 		}
-		
 	}
 }
 

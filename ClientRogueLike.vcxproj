@@ -89,10 +89,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SFML_DIR)\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>U:\SFML-2.5.1\include;$(SFML_DIR)\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>TIXML_USE_STL;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SFML_DIR)\lib;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>U:\SFML-2.5.1\lib;$(SFML_DIR)\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-window-d.lib;sfml-graphics-d.lib;sfml-system-d.lib;sfml-audio-d.lib;sfml-network-d.lib;winmm.lib;opengl32.lib;freetype.lib;jpeg.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;openal32.lib;flac.lib;ogg.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -125,10 +126,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Client.cpp" />
+    <ClCompile Include="Level\Level.cpp" />
+    <ClCompile Include="Level\LevelParser.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Utilities\Base64.cpp" />
+    <ClCompile Include="Utilities\tinyxml.cpp" />
+    <ClCompile Include="Utilities\tinyxmlerror.cpp" />
+    <ClCompile Include="Utilities\tinyxmlparser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
+    <ClInclude Include="Level\Level.h" />
+    <ClInclude Include="Level\LevelParser.h" />
+    <ClInclude Include="Utilities\Base64.h" />
+    <ClInclude Include="Utilities\tinyxml.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
