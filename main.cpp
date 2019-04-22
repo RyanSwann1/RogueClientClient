@@ -1,20 +1,12 @@
 #include "Client.h"
 #include "Level/Level.h"
+#include "Level/LevelParser.h"
 #include <iostream>
 #include <string>
-
-//packetType, clientID, 5
-//packetType clientID, posX, posY
-
-//Unable to unpack packet
-//if (!(packet >> packetType))
-//{
-//	continue;
-//}
+#include <vector>
 
 constexpr int INVALID_CLIENT_ID = -1;
 constexpr int CONNECT_TIMEOUT = 5000; //Milliseconds
-
 
 //struct Client
 //{
@@ -138,53 +130,46 @@ constexpr int CONNECT_TIMEOUT = 5000; //Milliseconds
 //	bool m_connected;
 //};
 
-//int main()
-//{
-//	Counter counter; // contains one int
-//
-//	std::vector<std::thread> threads;
-//	for (int i = 0; i < 5; ++i) {
-//		threads.push_back(std::thread([&counter]() {
-//			for (int i = 0; i < 100; ++i) {
-//				counter.increment();
-//			}
-//		}));
-//	}
-//
-//	for (auto& thread : threads) {
-//		thread.join();
-//	} // Threads are all finished.
-//
-//	std::cout << counter.value << std::endl;
-//
-//	char c;
-//	std::cin >> c;
-//
-//
-//	return 0;
-//}
+const std::string levelNames[6]
+{
+	"Level1",
+	"Level2",
+	"Level3",
+	"Level4",
+	"Level5",
+	"Level6"
+};
 
 int main()
 {
-	Level level;
-	Client client("192.168.0.14", 5030, level);
-	if (client.connectToServer())
+	sf::RenderWindow window(sf::VideoMode(640, 480), "SFML_WINDOW", sf::Style::Default);
+	Level level(LevelParser::parseLevel(levelNames[0]));
+
+	while (window.isOpen())
 	{
-		
-		while (client.isConnected())
-		{
-			char d;
-			std::cin >> d;
-			if (d == 'd')
-			{
-				client.disconnect();
-			}
-		}
+		level.draw(window);
+		level.update(0.f);
 	}
-	else
-	{
-		std::cout << "Failed to connectToServer.\n";
-	}
+
+
+
+	//Client client("192.168.0.14", 5030, level);
+	//if (client.connectToServer())
+	//{		
+	//	while (client.isConnected())
+	//	{
+	//		char d;
+	//		std::cin >> d;
+	//		if (d == 'd')
+	//		{
+	//			client.disconnect();
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	std::cout << "Failed to connectToServer.\n";
+	//}
 	      
 	std::cout << "Stopping application.\n";
 	sf::sleep(sf::seconds(2.f));

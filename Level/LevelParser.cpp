@@ -2,29 +2,30 @@
 #include "../Utilities/Base64.h"
 #include "../Utilities/tinyxml.h"
 #include "Level.h"
+#include <vector>
 #include <cassert>
 
 std::vector<TileLayer> parseTileLayers(const TiXmlElement& rootElement, const LevelDetails& levelDetails);
 LevelDetails parseLevelDetails(const TiXmlElement& rootElement);
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, sf::Vector2i levelSize);
 std::unordered_map<std::string, TileSheet> parseTileSheets(const TiXmlElement& rootElement);
-std::vector<sf::Vector2f> parseEntities(const TiXmlElement & rootElement, int tileSize);
+std::vector<sf::Vector2f> parseEntityStartingPositions(const TiXmlElement & rootElement, int tileSize);
 std::vector<sf::FloatRect> parseCollisionLayer(const TiXmlElement & rootElement, int tileSize);
 
 Level LevelParser::parseLevel(const std::string& levelName)
 {
 	TiXmlDocument mapFile;
 	bool mapLoaded = mapFile.LoadFile(levelName);
-	assert(mapLoaded);
+	//assert(mapLoaded);
 
 	const auto& rootElement = mapFile.RootElement();
 	LevelDetails levelDetails = parseLevelDetails(*rootElement);
 	std::vector<TileLayer> tileLayers = parseTileLayers(*rootElement, levelDetails);
 	std::unordered_map<std::string, TileSheet> tileSheets = parseTileSheets(*rootElement);
 	std::vector<sf::FloatRect> collisionLayer = parseCollisionLayer(*rootElement, levelDetails.m_tileSize);
-	std::vector<sf::Vector2f> entities = parseEntities(*rootElement, levelDetails.m_tileSize);
-	
-	//return Level();
+	std::vector<sf::Vector2f> entityStartingPositions = parseEntityStartingPositions(*rootElement, levelDetails.m_tileSize);
+
+	return Level(levelDetails, tileLayers, tileSheets, std::move(collisionLayer), entityStartingPositions);
 }
 
 std::vector<sf::FloatRect> parseCollisionLayer(const TiXmlElement & rootElement, int tileSize)
@@ -58,7 +59,7 @@ std::vector<sf::FloatRect> parseCollisionLayer(const TiXmlElement & rootElement,
 	return collidablePositions;
 }
 
-std::vector<sf::Vector2f> parseEntities(const TiXmlElement & rootElement, int tileSize)
+std::vector<sf::Vector2f> parseEntityStartingPositions(const TiXmlElement & rootElement, int tileSize)
 {
 	std::vector<sf::Vector2f> entityStartingPositions;
 	for (const auto* entityElementRoot = rootElement.FirstChildElement(); entityElementRoot != nullptr; entityElementRoot = entityElementRoot->NextSiblingElement())
@@ -76,6 +77,7 @@ std::vector<sf::Vector2f> parseEntities(const TiXmlElement & rootElement, int ti
 			startingPosition.y -= tileSize; //Tiled Hack
 
 			entityStartingPositions.push_back(sf::Vector2f(startingPosition.x, startingPosition.y));
+			entityStartingPositions.
 			
 		}
 	}
@@ -105,7 +107,7 @@ std::unordered_map<std::string, TileSheet> parseTileSheets(const TiXmlElement& r
 		tileSheets.emplace(name, TileSheet( source, tileSize, columns ));
 	}
 
-	assert(!tileSheets.empty());
+	//assert(!tileSheets.empty());
 	return tileSheets;
 }
 

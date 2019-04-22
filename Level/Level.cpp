@@ -51,11 +51,9 @@ void TileLayer::draw(const TileSheet& tileSheet, sf::RenderWindow& window, const
 }
 
 //Level
-Level::Level(const LevelDetails& levelDetails, std::vector<TileLayer> tileLayers, std::unordered_map<std::string, TileSheet> tileSheets,
-	std::vector<sf::FloatRect>&& collisionLayer, std::vector<sf::Vector2f> entityStartingPositions)
+Level::Level(const LevelDetails& levelDetails, TileLayer tileLayer, std::vector<sf::FloatRect>&& collisionLayer, std::vector<sf::Vector2f> entityStartingPositions)
 	: m_details(levelDetails),
-	m_tileLayers(tileLayers),
-	m_tileSheets(tileSheets),
+	m_tileLayer(tileLayer),
 	m_collisionLayer(std::move(collisionLayer))
 {}
 
@@ -66,48 +64,44 @@ const LevelDetails & Level::getDetails() const
 
 const TileLayer & Level::getTileLayer() const
 {
-	return m_tileLayers.front();
+	return m_tileLayer;
 }
 
-const std::vector<sf::FloatRect>& Level::getCollisionLayer() const
+const std::vector<sf::Vector2i>& Level::getCollisionLayer() const
 {
 	assert(!m_collisionLayer.empty());
 	return m_collisionLayer;
 }
 
-const TileSheet & Level::getTileSheet(const std::string & name) const
+
+void Level::draw(sf::RenderWindow& window, const TileSheet& tileSheet) const
 {
-	auto iter = m_tileSheets.find(name);
-	assert(iter != m_tileSheets.cend());
-	return iter->second;
+	m_tileLayer.draw(tileSheet, window, m_details);
 }
 
-void Level::draw(sf::RenderWindow& window) const
+void Level::update(float deltaTime)
 {
-	for (const auto& tileLayer : m_tileLayers)
-	{
-		tileLayer.draw(m_tileSheets.begin()->second, window, m_details);
-	}
+
 }
 
 void Level::updatePlayerPosition(int clientID, sf::Vector2f newPosition)
 {
-	auto iter = std::find_if(m_players.begin(), m_players.end(), [clientID](const auto& player) { return clientID == player.m_clientID; });
+	/*auto iter = std::find_if(m_players.begin(), m_players.end(), [clientID](const auto& player) { return clientID == player.m_clientID; });
 	assert(iter != m_players.cend());
-	iter->m_position = newPosition;
+	iter->m_position = newPosition;*/
 }
 
 void Level::addPlayer(int clientID, sf::Vector2f startingPosition)
 {
-	auto cIter = std::find_if(m_players.cbegin(), m_players.cend(), [clientID](const auto& player) { return clientID == player.m_clientID; });
-	assert(cIter != m_players.cend());
+	//auto cIter = std::find_if(m_players.cbegin(), m_players.cend(), [clientID](const auto& player) { return clientID == player.m_clientID; });
+	//assert(cIter != m_players.cend());
 
-	m_players.emplace_back(clientID, startingPosition);
+	//m_players.emplace_back(clientID, startingPosition);
 }
 
 void Level::removePlayer(int clientID)
 {
-	auto cIter = std::find_if(m_players.cbegin(), m_players.cend(), [clientID](const auto& player) { return clientID == player.m_clientID; });
-	assert(cIter != m_players.cend());
-	m_players.erase(cIter);
+	//auto cIter = std::find_if(m_players.cbegin(), m_players.cend(), [clientID](const auto& player) { return clientID == player.m_clientID; });
+	//assert(cIter != m_players.cend());
+	//m_players.erase(cIter);
 }
