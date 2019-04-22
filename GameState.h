@@ -5,5 +5,6 @@
 
 struct GameState
 {
+	std::vector<Players> m_players;
 
 };

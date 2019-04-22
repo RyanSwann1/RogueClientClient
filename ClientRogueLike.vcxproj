@@ -134,6 +134,8 @@
     <ClCompile Include="NetworkHandler.cpp" />
     <ClCompile Include="PathFinding.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Selector.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Utilities\Base64.cpp" />
     <ClCompile Include="Utilities\tinyxml.cpp" />
     <ClCompile Include="Utilities\tinyxmlerror.cpp" />
@@ -142,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="Client.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="GameState.h" />
     <ClInclude Include="Level\Level.h" />
     <ClInclude Include="Level\LevelParser.h" />
     <ClInclude Include="NetworkHandler.h" />
