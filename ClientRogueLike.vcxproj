@@ -147,6 +147,7 @@
     <ClInclude Include="NetworkHandler.h" />
     <ClInclude Include="PathFinding.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Selector.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Utilities\Base64.h" />
     <ClInclude Include="Utilities\tinyxml.h" />

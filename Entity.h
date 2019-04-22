@@ -13,12 +13,15 @@ class NetworkHandler;
 class Entity
 {
 public:
-	Entity(int entityID, EntityType entityType);
+	Entity(int entityID, EntityType entityType, sf::Vector2i startingPosition);
 
 	EntityType getEntityType() const;
 
-	virtual void update(NetworkHandler& networkHandler) = 0;
+	virtual void update(float deltaTime) = 0;
 	void render(sf::RenderWindow& window) const;
+
+protected:
+	sf::Vector2i m_currentPosition;
 
 private:
 	const int m_ID;

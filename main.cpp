@@ -1,6 +1,7 @@
 #include "Client.h"
 #include "Level/Level.h"
 #include "Level/LevelParser.h"
+#include "Selector.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -144,13 +145,33 @@ int main()
 {
 	sf::RenderWindow window(sf::VideoMode(640, 480), "SFML_WINDOW", sf::Style::Default);
 	Level level(LevelParser::parseLevel(levelNames[0]));
+	Selector selector(window, level.getDetails().m_tileSize);
 
+	sf::Event currentEvent;
 	while (window.isOpen())
 	{
-		level.draw(window);
+		while (window.pollEvent(currentEvent))
+		{
+			switch (currentEvent.type)
+			{
+			case sf::Event::Closed :
+				window.close();
+				break;
+			}
+		}
+
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+		{
+			level.getPlayer().moveToPosition(selector.getPosition(), level);
+		}
+
 		level.update(0.f);
+		window.clear(sf::Color::Black);
+		//level.draw(window);
+	
 	}
 
+	//Disconnect Client From Server
 
 
 	//Client client("192.168.0.14", 5030, level);

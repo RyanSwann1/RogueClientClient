@@ -4,9 +4,9 @@
 #include <math.h>
 
 bool isInBounds(const LevelDetails& levelDetails, int x, int y);
-std::vector<sf::Vector2i> getNeighbours(sf::Vector2i source, const Level& level);
-bool isCollidableTile(sf::Vector2i position, const std::vector<sf::Vector2i>& collisionLayer);
-sf::Vector2i getNextPoint(sf::Vector2i destination, const Level& level, const std::vector<sf::Vector2i>& graph);
+std::deque<sf::Vector2i> getNeighbours(sf::Vector2i source, const Level& level);
+bool isTileCollidable(sf::Vector2i position, const std::vector<sf::Vector2i>& collisionLayer);
+sf::Vector2i getNextPoint(sf::Vector2i destination, const Level& level, const std::deque<sf::Vector2i>& graph);
 int getDifferenceBetweenPoints(sf::Vector2i tile, sf::Vector2i source);
 bool isDestinationReached(sf::Vector2i currentPoint, sf::Vector2i destination);
 
@@ -25,15 +25,15 @@ bool isDestinationReached(sf::Vector2i currentPoint, sf::Vector2i destination)
 	return currentPoint == destination;
 }
 
-std::vector<sf::Vector2i> getNeighbours(sf::Vector2i source, const Level& level)
+std::deque<sf::Vector2i> getNeighbours(sf::Vector2i source, const Level& level)
 {
-	std::vector<sf::Vector2i> neighbours;
+	std::deque<sf::Vector2i> neighbours;
 	auto& levelDetails = level.getDetails();
 	for (int y = 0; y <= 2; y += 2)
 	{
 		for (int x = 0; x <= 2; x += 2)
 		{
-			if (isInBounds(levelDetails, x, y) && !isCollidableTile({ x, y }, level.getCollisionLayer()))
+			if (isInBounds(levelDetails, x, y) && !isTileCollidable({ x, y }, level.getCollisionLayer()))
 			{
 				neighbours.emplace_back(x, y);
 			}
@@ -43,13 +43,13 @@ std::vector<sf::Vector2i> getNeighbours(sf::Vector2i source, const Level& level)
 	return neighbours;
 }
 
-bool isCollidableTile(sf::Vector2i position, const std::vector<sf::Vector2i>& collisionLayer)
+bool isTileCollidable(sf::Vector2i position, const std::vector<sf::Vector2i>& collisionLayer)
 {
 	auto cIter = std::find_if(collisionLayer.begin(), collisionLayer.end(), [position](const auto& tile) { return position == tile; });
 	return (cIter != collisionLayer.cend());
 }
 
-sf::Vector2i getNextPoint(sf::Vector2i destination, const Level & level, const std::vector<sf::Vector2i>& graph)
+sf::Vector2i getNextPoint(sf::Vector2i destination, const Level & level, const std::deque<sf::Vector2i>& graph)
 {
 	auto neighbours = getNeighbours(graph.back(), level);
 	sf::Vector2i point;
@@ -67,15 +67,14 @@ sf::Vector2i getNextPoint(sf::Vector2i destination, const Level & level, const s
 	return point;
 }
 
-std::vector<sf::Vector2i> PathFinding::getPathToTile(sf::Vector2i source, sf::Vector2i destination, const Level& level, int movementPoints)
+std::deque<sf::Vector2i> PathFinding::getPathToTile(sf::Vector2i source, sf::Vector2i destination, const Level& level, int movementPoints)
 {
 	if (movementPoints <= 0)
 	{
 		return;
 	}
 
-	std::vector<sf::Vector2i> graph;
-	graph.reserve(static_cast<size_t>(movementPoints));
+	std::deque<sf::Vector2i> graph;
 	graph.push_back(source);
 	bool stopPathGeneration = false;
 	while (!stopPathGeneration)

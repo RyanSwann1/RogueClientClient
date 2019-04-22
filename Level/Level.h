@@ -50,6 +50,8 @@ public:
 	const LevelDetails& getDetails() const;
 	const TileLayer& getTileLayer() const;
 	const std::vector<sf::Vector2i>& getCollisionLayer() const;
+	Player& getPlayer();
+
 
 	void draw(sf::RenderWindow& window, const TileSheet& tileSheet) const;
 	void update(float deltaTime);
@@ -62,4 +64,5 @@ private:
 	const LevelDetails m_details;
 	const TileLayer m_tileLayer;
 	const std::vector<sf::FloatRect> m_collisionLayer;
+	Player m_player;
 };

@@ -73,6 +73,11 @@ const std::vector<sf::Vector2i>& Level::getCollisionLayer() const
 	return m_collisionLayer;
 }
 
+Player & Level::getPlayer()
+{
+	return m_player;
+}
+
 
 void Level::draw(sf::RenderWindow& window, const TileSheet& tileSheet) const
 {

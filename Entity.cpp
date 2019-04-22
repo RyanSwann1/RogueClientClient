@@ -1,10 +1,10 @@
 #include "Entity.h"
 
-Entity::Entity(int entityID, EntityType entityType)
+Entity::Entity(int entityID, EntityType entityType, sf::Vector2i startingPosition)
 	: m_ID(entityID),
-	m_type(entityType)
-{
-}
+	m_type(entityType),
+	m_currentPosition(startingPosition)
+{}
 
 EntityType Entity::getEntityType() const
 {

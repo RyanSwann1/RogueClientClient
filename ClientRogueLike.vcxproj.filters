@@ -83,5 +83,8 @@
     <ClInclude Include="PathFinding.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Selector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
