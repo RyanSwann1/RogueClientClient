@@ -131,6 +131,10 @@ constexpr int CONNECT_TIMEOUT = 5000; //Milliseconds
 //	bool m_connected;
 //};
 
+//TIle sheet to use for world
+//https://opengameart.org/content/dungeon-tileset
+//Now need a character pack
+
 const std::string levelNames[6]
 {
 	"Level1",

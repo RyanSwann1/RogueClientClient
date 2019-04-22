@@ -14,6 +14,7 @@ public:
 	void moveToPosition(sf::Vector2i newPosition, const Level& level);
 
 private:
+	int m_clientID;
 	int m_movementPoints;
 	std::deque<sf::Vector2i> m_pathToTile;
 	Timer m_movementTimer;

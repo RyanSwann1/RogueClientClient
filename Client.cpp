@@ -140,6 +140,16 @@ void Client::listenForTCPMessages()
 		case PacketType::Disconnect :
 			//Handle player disconnection
 			break;
+		case PacketType::CurrentGameState :
+			
+			break;
 		}
 	}
+}
+
+void Client::handleCurrentGameStateMessage(sf::Packet& packet)
+{
+	std::string currentLevelName;
+	std::vector<Players> playersInPlay;
+
 }

@@ -10,7 +10,8 @@ enum class PacketType
 	Connect = 0,
 	Disconnect,
 	HeartBeat,
-	PlayerPosition
+	PlayerPosition,
+	CurrentGameState
 };
 
 struct ServerMessage
@@ -55,8 +56,8 @@ private:
 	bool m_connected;
 	int m_clientID;
 
-	
-
 	void listenForUDPMessages();
 	void listenForTCPMessages();
+
+	void handleCurrentGameStateMessage(sf::Packet& packet);
 };

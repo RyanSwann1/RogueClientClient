@@ -42,6 +42,7 @@ private:
 	const std::vector<std::vector<int>> m_tileLayer;
 };
 
+struct GameState;
 class Level
 {
 public:
@@ -52,6 +53,7 @@ public:
 	const std::vector<sf::Vector2i>& getCollisionLayer() const;
 	Player& getPlayer();
 
+	void setGameState(const )
 
 	void draw(sf::RenderWindow& window, const TileSheet& tileSheet) const;
 	void update(float deltaTime);
@@ -61,8 +63,8 @@ public:
 	void removePlayer(int clientID);
 
 private:
-	const LevelDetails m_details;
-	const TileLayer m_tileLayer;
-	const std::vector<sf::FloatRect> m_collisionLayer;
-	Player m_player;
+	LevelDetails m_details;
+	TileLayer m_tileLayer;
+	std::vector<sf::FloatRect> m_collisionLayer;
+	std::vector<Players> m_players;
 };
