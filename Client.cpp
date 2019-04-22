@@ -2,11 +2,11 @@
 #include <iostream>
 
 constexpr int CONNECT_TIMEOUT = 5000; //Milliseconds
+constexpr int RECEIVE_GAME_DATA_TIMEOUT = 5000; // Milliseconds
 constexpr int INVALID_CLIENT_ID = -1;
 
-Client::Client(sf::IpAddress serverIPAddress, unsigned short serverPortNumber, Level& level)
-	: m_level(level),
-	m_serverIPAddress(serverIPAddress),
+Client::Client(sf::IpAddress serverIPAddress, unsigned short serverPortNumber)
+	: m_serverIPAddress(serverIPAddress),
 	m_tcpSocket(),
 	m_udpSocket(),
 	m_listenTCPThread(),
@@ -25,6 +25,27 @@ Client::~Client()
 bool Client::isConnected() const
 {
 	return m_connected;
+}
+
+bool Client::receivedGameState(GameState & gameState)
+{
+	sf::Clock timer;
+	float elaspedTime = 0;
+	m_tcpSocket.setBlocking(false);
+	char data[100];
+	size_t received;
+	while (elaspedTime <= RECEIVE_GAME_DATA_TIMEOUT)
+	{
+		elaspedTime += timer.restart().asMilliseconds();
+		if (m_tcpSocket.receive(data, 15000, received) != sf::Socket::Done)
+		{
+			continue;
+		}
+
+
+	}
+
+	m_tcpSocket.setBlocking(true);
 }
 
 bool Client::connectToServer()
@@ -149,7 +170,7 @@ void Client::listenForTCPMessages()
 
 void Client::handleCurrentGameStateMessage(sf::Packet& packet)
 {
-	std::string currentLevelName;
-	std::vector<Players> playersInPlay;
+	/*std::string currentLevelName;
+	std::vector<Players> playersInPlay;*/
 
 }

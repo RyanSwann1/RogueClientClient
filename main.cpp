@@ -147,9 +147,25 @@ const std::string levelNames[6]
 
 int main()
 {
+	Client client("121", 199);
+	if (!client.connectToServer())
+	{
+		std::cout << "Failed to connectToServer.\n";
+		std::cout << "Stopping application.\n";
+		sf::sleep(sf::seconds(2.f));
+		return;
+	}
+
 	sf::RenderWindow window(sf::VideoMode(640, 480), "SFML_WINDOW", sf::Style::Default);
-	Level level(LevelParser::parseLevel(levelNames[0]));
-	Selector selector(window, level.getDetails().m_tileSize);
+	
+	//Level level(LevelParser::parseLevel(levelNames[0]));
+	//Selector selector(window, level.getDetails().m_tileSize);
+
+	//Receive Game Data Before Game Begins.
+	//If not, don't start game - disconnect
+	//Introduce time out feature to wait for current state of the map to be sent
+	//if exceed time, server time out
+	//Then server disconnects client
 
 	sf::Event currentEvent;
 	while (window.isOpen())
@@ -166,10 +182,10 @@ int main()
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 		{
-			level.getPlayer().moveToPosition(selector.getPosition(), level);
+			//level.getPlayer()->moveToPosition(selector.getPosition(), level);
 		}
 
-		level.update(0.f);
+		//level.update(0.f);
 		window.clear(sf::Color::Black);
 		//level.draw(window);
 	

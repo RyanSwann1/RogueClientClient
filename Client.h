@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GameState.h"
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 #include <thread>
@@ -27,11 +28,10 @@ struct ServerMessage
 	sf::Vector2f m_position;
 };
 
-class Level;
 class Client
 {
 public:
-	Client(sf::IpAddress serverIPAddress, unsigned short serverPortNumber, Level& level);
+	Client(sf::IpAddress serverIPAddress, unsigned short serverPortNumber);
 	Client(Client&) = delete;
 	Client& operator=(Client&) = delete;
 	Client(Client&&) = delete;
@@ -40,12 +40,14 @@ public:
 
 	bool isConnected() const;
 
+	bool receivedGameState(GameState& gameState);
+	getLastReceivedGameState() const;
+
 	bool connectToServer();
 	void disconnect();
 	
 
 private:
-	Level& m_level;
 	std::deque<ServerMessage> m_messageQueue;
 	sf::IpAddress m_serverIPAddress;
 	sf::TcpSocket m_tcpSocket;

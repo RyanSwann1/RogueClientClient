@@ -71,21 +71,20 @@ std::deque<sf::Vector2i> PathFinding::getPathToTile(sf::Vector2i source, sf::Vec
 {
 	if (movementPoints <= 0)
 	{
-		return;
+		return std::deque<sf::Vector2i>();
 	}
 
 	std::deque<sf::Vector2i> graph;
 	graph.push_back(source);
-	bool stopPathGeneration = false;
-	while (!stopPathGeneration)
+	bool generatePath = true;
+	while (!generatePath)
 	{
 		graph.push_back(getNextPoint(destination, level, graph));
 		
 		--movementPoints;
-		
 		if (movementPoints <= 0 || isDestinationReached(graph.back(), destination))
 		{
-			stopPathGeneration = true;
+			generatePath = false;
 		}
 	}
 

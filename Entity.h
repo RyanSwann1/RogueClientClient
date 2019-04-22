@@ -15,6 +15,7 @@ class Entity
 public:
 	Entity(int entityID, EntityType entityType, sf::Vector2i startingPosition);
 
+	int getID() const;
 	EntityType getEntityType() const;
 
 	virtual void update(float deltaTime) = 0;

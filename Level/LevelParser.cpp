@@ -10,7 +10,7 @@ LevelDetails parseLevelDetails(const TiXmlElement& rootElement);
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, sf::Vector2i levelSize);
 std::unordered_map<std::string, TileSheet> parseTileSheets(const TiXmlElement& rootElement);
 std::vector<sf::Vector2f> parseEntityStartingPositions(const TiXmlElement & rootElement, int tileSize);
-std::vector<sf::FloatRect> parseCollisionLayer(const TiXmlElement & rootElement, int tileSize);
+std::vector<sf::Vector2i> parseCollisionLayer(const TiXmlElement & rootElement, int tileSize);
 
 Level LevelParser::parseLevel(const std::string& levelName)
 {
@@ -21,16 +21,15 @@ Level LevelParser::parseLevel(const std::string& levelName)
 	const auto& rootElement = mapFile.RootElement();
 	LevelDetails levelDetails = parseLevelDetails(*rootElement);
 	std::vector<TileLayer> tileLayers = parseTileLayers(*rootElement, levelDetails);
-	std::unordered_map<std::string, TileSheet> tileSheets = parseTileSheets(*rootElement);
-	std::vector<sf::FloatRect> collisionLayer = parseCollisionLayer(*rootElement, levelDetails.m_tileSize);
+	std::vector<sf::Vector2i> collisionLayer = parseCollisionLayer(*rootElement, levelDetails.m_tileSize);
 	std::vector<sf::Vector2f> entityStartingPositions = parseEntityStartingPositions(*rootElement, levelDetails.m_tileSize);
 
-	return Level(levelDetails, tileLayers, tileSheets, std::move(collisionLayer), entityStartingPositions);
+	return Level(levelDetails, tileLayers, std::move(collisionLayer), entityStartingPositions);
 }
 
-std::vector<sf::FloatRect> parseCollisionLayer(const TiXmlElement & rootElement, int tileSize)
+std::vector<sf::Vector2i> parseCollisionLayer(const TiXmlElement & rootElement, int tileSize)
 {
-	std::vector<sf::FloatRect> collidablePositions;
+	std::vector<sf::Vector2i> collidablePositions;
 	for (const auto* collisionLayerElement = rootElement.FirstChildElement(); collisionLayerElement != nullptr;
 		collisionLayerElement = collisionLayerElement->NextSiblingElement())
 	{
@@ -77,7 +76,7 @@ std::vector<sf::Vector2f> parseEntityStartingPositions(const TiXmlElement & root
 			startingPosition.y -= tileSize; //Tiled Hack
 
 			entityStartingPositions.push_back(sf::Vector2f(startingPosition.x, startingPosition.y));
-			entityStartingPositions.
+			//entityStartingPositions.
 			
 		}
 	}

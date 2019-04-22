@@ -94,7 +94,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>U:\SFML-2.5.1\lib;$(SFML_DIR)\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-window-d.lib;sfml-graphics-d.lib;sfml-system-d.lib;sfml-audio-d.lib;sfml-network-d.lib;winmm.lib;opengl32.lib;freetype.lib;jpeg.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;openal32.lib;flac.lib;ogg.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-window-d.lib;sfml-graphics-d.lib;sfml-system-d.lib;sfml-audio-d.lib;sfml-network-d.lib;winmm.lib;opengl32.lib;freetype.lib;vorbis.lib;vorbisenc.lib;vorbisfile.lib;openal32.lib;flac.lib;ogg.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

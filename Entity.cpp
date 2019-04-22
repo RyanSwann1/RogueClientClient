@@ -6,6 +6,11 @@ Entity::Entity(int entityID, EntityType entityType, sf::Vector2i startingPositio
 	m_currentPosition(startingPosition)
 {}
 
+int Entity::getID() const
+{
+	return m_ID;
+}
+
 EntityType Entity::getEntityType() const
 {
 	return m_type;

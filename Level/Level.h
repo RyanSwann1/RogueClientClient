@@ -46,25 +46,25 @@ struct GameState;
 class Level
 {
 public:
-	Level(const LevelDetails& levelDetails, TileLayer tileLayer, std::vector<sf::FloatRect>&& collisionLayer, std::vector<sf::Vector2f> entityStartingPositions);
+	Level(const LevelDetails& levelDetails, const std::vector<TileLayer>& tileLayer, std::vector<sf::Vector2i>&& collisionLayer);
 
 	const LevelDetails& getDetails() const;
-	const TileLayer& getTileLayer() const;
+	const std::vector<TileLayer>& getTileLayer() const;
 	const std::vector<sf::Vector2i>& getCollisionLayer() const;
-	Player& getPlayer();
+	std::unique_ptr<Player>& getPlayer();
 
-	void setGameState(const )
+	//void setGameState(const )
 
 	void draw(sf::RenderWindow& window, const TileSheet& tileSheet) const;
 	void update(float deltaTime);
 
-	void updatePlayerPosition(int clientID, sf::Vector2f newPosition);
-	void addPlayer(int clientID, sf::Vector2f startingPosition);
+	void updatePlayerPosition(int clientID, sf::Vector2i newPosition);
+	void addPlayer(int clientID, sf::Vector2i startingPosition);
 	void removePlayer(int clientID);
 
 private:
-	LevelDetails m_details;
-	TileLayer m_tileLayer;
-	std::vector<sf::FloatRect> m_collisionLayer;
-	std::vector<Players> m_players;
+	const LevelDetails m_details;
+	const std::vector<TileLayer> m_tileLayers;
+	const std::vector<sf::Vector2i> m_collisionLayer;
+	std::vector<std::unique_ptr<Player>> m_players;
 };
