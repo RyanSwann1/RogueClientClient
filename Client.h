@@ -39,7 +39,7 @@ public:
 	~Client();
 
 	bool isConnected() const;
-	bool receivedGameState(GameState& gameState);
+	bool receivedLatestGameData(GameState& gameState);
 
 	bool connectToServer();
 	void disconnect();

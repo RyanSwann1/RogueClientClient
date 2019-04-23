@@ -27,7 +27,7 @@ bool Client::isConnected() const
 	return m_connected;
 }
 
-bool Client::receivedGameState(GameState& latestGameState)
+bool Client::receivedLatestGameData(GameState& latestGameState)
 {
 	sf::Clock timer;
 	float elaspedTime = 0;
@@ -55,10 +55,9 @@ bool Client::receivedGameState(GameState& latestGameState)
 				continue;
 			}
 
-			//Assign Player
+
+			latestGameState.m_levelName = levelName;
 			latestGameState.m_playerStartingPosition = *playerStartingPosition;
-			//Assign enemies
-			int totalCurrentPlayers = enemyIDs->size();
 			for (int i = 0; i < enemyPositions->size(); ++i)
 			{
 				latestGameState.m_enemies.emplace_back(enemyPositions[i], enemyIDs[i]);
@@ -161,10 +160,12 @@ void Client::listenForUDPMessages()
 			continue;
 		}
 
+		sf::Vector2i newPosition;
 		switch (static_cast<PacketType>(packetType))
 		{
 		case PacketType::PlayerPosition :
-			
+			packet >> clientID >> packetType >> newPosition.x >> newPosition.y;
+			m_messageQueue.emplace_back(clientID, packetType, newPosition);
 			break;
 		}
 	}

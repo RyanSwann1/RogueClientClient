@@ -19,20 +19,10 @@ void TileSheet::setTileSheet(const std::string & textureName, int columns)
 }
 
 //TileLayer
-TileLayer::TileLayer(const std::vector<std::vector<int>>& tileLayer, const std::string& tileSheetName)
-	: m_name(tileSheetName),
-	m_tileLayer(tileLayer)
+TileLayer::TileLayer()
+	: m_name(),
+	m_tileLayer()
 {}
-
-const std::vector<std::vector<int>>& TileLayer::getTileLayer() const
-{
-	return m_tileLayer;
-}
-
-const std::string & TileLayer::getName() const
-{
-	return m_name;
-}
 
 void TileLayer::draw(sf::RenderWindow& window, const LevelDetails& levelDetails) const
 {

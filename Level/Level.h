@@ -7,11 +7,12 @@
 #include "../Player.h"
 #include "../LevelDetails.h"
 
+struct ServerMessage;
 struct GameState;
 class Level
 {
 public:
-	Level(const LevelDetails& levelDetails);
+	Level();
 
 	const LevelDetails& getDetails() const;
 	std::unique_ptr<Player>& getPlayer();
@@ -21,6 +22,7 @@ public:
 	void draw(sf::RenderWindow& window) const;
 	void update(float deltaTime);
 
+	void receiveServerMessage(const ServerMessage& serverMessage);
 	void updateEnemyPosition(int clientID, sf::Vector2i newPosition);
 	void addEnemy(int clientID, sf::Vector2i startingPosition);
 	void removeEnemy(int clientID);

@@ -9,7 +9,6 @@ struct TileSheet
 {
 	TileSheet();
 	//	tileSheets.emplace(name, TileSheet( source, tileSize, columns ));
-	TileSheet();
 
 	sf::IntRect getTileLocation(int tileID, int tileSize) const;
 	void setTileSheet(const std::string& textureName, int columns);
@@ -18,18 +17,15 @@ struct TileSheet
 	sf::Texture m_texture;
 };
 
-class TileLayer
+struct LevelDetails;
+struct TileLayer
 {
-public:
-	TileLayer(const std::vector<std::vector<int>>& tileLayer, const std::string& tileSheetName);
+	TileLayer();
 
-	const std::vector<std::vector<int>>& getTileLayer() const;
-	const std::string& getName() const;
 	void draw(sf::RenderWindow& window, const LevelDetails& levelDetails) const;
 
-private:
-	const std::string m_name;
-	const std::vector<std::vector<int>> m_tileLayer;
+	std::string m_name;
+	std::vector<std::vector<int>> m_tileLayer;
 };
 
 struct LevelDetails

@@ -4,10 +4,11 @@
 #include <utility>
 #include <assert.h>
 #include <algorithm>
+#include "../Client.h"
 
 //Level
-Level::Level(const LevelDetails& levelDetails)
-	: m_details(levelDetails),
+Level::Level()
+	: m_details(),
 	m_player(),
 	m_enemies()
 {}
@@ -30,7 +31,6 @@ void Level::setGameState(const GameState & latestGameState)
 	}
 
 	m_details = LevelParser::parseLevel(latestGameState.m_levelName);
-
 	m_player = std::make_unique<Player>(0, EntityType::Player, latestGameState.m_playerStartingPosition);
 }
 
@@ -52,6 +52,17 @@ void Level::draw(sf::RenderWindow& window) const
 void Level::update(float deltaTime)
 {
 	m_player->update(deltaTime);
+}
+
+void Level::receiveServerMessage(const ServerMessage & serverMessage)
+{
+	switch (serverMessage.m_packetType)
+	{
+	case PacketType::PlayerPosition :
+		break;
+	case PacketType::Disconnect :
+		break;
+	}
 }
 
 void Level::updateEnemyPosition(int clientID, sf::Vector2i newPosition)
