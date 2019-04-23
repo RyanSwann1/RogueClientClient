@@ -27,25 +27,55 @@ bool Client::isConnected() const
 	return m_connected;
 }
 
-bool Client::receivedGameState(GameState & gameState)
+bool Client::receivedGameState(GameState& latestGameState)
 {
 	sf::Clock timer;
 	float elaspedTime = 0;
 	m_tcpSocket.setBlocking(false);
-	char data[100];
+	char data[150000];
 	size_t received;
 	while (elaspedTime <= RECEIVE_GAME_DATA_TIMEOUT)
 	{
 		elaspedTime += timer.restart().asMilliseconds();
-		if (m_tcpSocket.receive(data, 15000, received) != sf::Socket::Done)
+		if (m_tcpSocket.receive(data, 150000, received) != sf::Socket::Done)
 		{
 			continue;
 		}
 
+		PacketType packetType = (PacketType)data[0];
+		if (packetType == PacketType::LatestGameState)
+		{
+			std::string levelName = (std::string)&data[sizeof(packetType)];
+			sf::Vector2i* playerStartingPosition = (sf::Vector2i*)&data[sizeof(packetType) + sizeof(levelName)];
+			std::vector<sf::Vector2i>* enemyPositions = (std::vector<sf::Vector2i>*)&data[sizeof(packetType) + sizeof(levelName)];
+			std::vector<int>* enemyIDs = (std::vector<int>*)&data[sizeof(packetType) + sizeof(levelName) + sizeof(enemyPositions)];
 
+			if (enemyPositions->size() != enemyIDs->size())
+			{
+				continue;
+			}
+
+			//Assign Player
+			latestGameState.m_playerStartingPosition = *playerStartingPosition;
+			//Assign enemies
+			int totalCurrentPlayers = enemyIDs->size();
+			for (int i = 0; i < enemyPositions->size(); ++i)
+			{
+				latestGameState.m_enemies.emplace_back(enemyPositions[i], enemyIDs[i]);
+			}
+
+			m_tcpSocket.setBlocking(true);
+			return true;
+		}
+		else
+		{
+			m_tcpSocket.setBlocking(true);
+			break;
+		}
 	}
 
 	m_tcpSocket.setBlocking(true);
+	return false;
 }
 
 bool Client::connectToServer()
@@ -161,16 +191,8 @@ void Client::listenForTCPMessages()
 		case PacketType::Disconnect :
 			//Handle player disconnection
 			break;
-		case PacketType::CurrentGameState :
-			
+		case PacketType::LatestGameState :
 			break;
 		}
 	}
-}
-
-void Client::handleCurrentGameStateMessage(sf::Packet& packet)
-{
-	/*std::string currentLevelName;
-	std::vector<Players> playersInPlay;*/
-
 }

@@ -1,20 +1,26 @@
 #include "Level.h"
+#include "../GameState.h"
+#include "LevelParser.h"
 #include <utility>
 #include <assert.h>
 #include <algorithm>
 
 //TileSheet
-TileSheet::TileSheet(const std::string& name, int tileSize, int columns)
+TileSheet::TileSheet()
 	: m_texture(),
-	m_columns(columns)
-{
-	m_texture.loadFromFile(name);
-}
+	m_columns()
+{}
 
 sf::IntRect TileSheet::getTileLocation(int tileID, int tileSize) const
 {
 	return sf::IntRect((tileID % m_columns) * tileSize,
 		(tileID / m_columns) * tileSize, tileSize, tileSize);
+}
+
+void TileSheet::setTileSheet(const std::string & textureName, int columns)
+{
+	m_texture.loadFromFile(textureName);
+	m_columns = columns;
 }
 
 //TileLayer
@@ -51,10 +57,13 @@ void TileLayer::draw(const TileSheet& tileSheet, sf::RenderWindow& window, const
 }
 
 //Level
-Level::Level(const LevelDetails& levelDetails, const std::vector<TileLayer>& tileLayer, std::vector<sf::Vector2i>&& collisionLayer, std::vector<sf::Vector2f> entityStartingPositions)
-	: m_details(levelDetails),
-	m_tileLayers(tileLayer),
-	m_collisionLayer(std::move(collisionLayer))
+Level::Level()
+	: m_details(),
+	m_tileLayers(),
+	m_collisionLayer(),
+	m_tileSheet(),
+	m_player(),
+	m_enemies()
 {}
 
 const LevelDetails & Level::getDetails() const
@@ -75,40 +84,61 @@ const std::vector<sf::Vector2i>& Level::getCollisionLayer() const
 
 std::unique_ptr<Player> & Level::getPlayer()
 {
-	return m_players.front();
+	return m_player;
 }
 
-void Level::draw(sf::RenderWindow& window, const TileSheet& tileSheet) const
+void Level::setGameState(const GameState & latestGameState)
+{
+	for (auto& enemyInfo : latestGameState.m_enemies)
+	{
+		m_enemies.emplace_back(enemyInfo.m_ID, EntityType::Enemy, enemyInfo.m_position);
+	}
+
+	 LevelParser::parseLevel(latestGameState.m_levelName);
+
+	m_player = std::make_unique<Player>(0, EntityType::Player, latestGameState.m_playerStartingPosition);
+}
+
+void Level::draw(sf::RenderWindow& window) const
 {
 	for (const auto& tileLayer : m_tileLayers)
 	{
-		tileLayer.draw(tileSheet, window, m_details);
+		tileLayer.draw(m_tileSheet, window, m_details);
+	}
+
+	m_player->render(window);
+
+	for (const auto& enemy : m_enemies)
+	{
+		enemy->render(window);
 	}
 }
 
 void Level::update(float deltaTime)
 {
-	//update entities
+	m_player->update(deltaTime);
 }
 
-void Level::updatePlayerPosition(int clientID, sf::Vector2i newPosition)
+void Level::updateEnemyPosition(int clientID, sf::Vector2i newPosition)
 {
-	auto iter = std::find_if(m_players.begin(), m_players.end(), [clientID](const auto& player) { return clientID == player->getID(); });
-	assert(iter != m_players.end());
-	(*iter)->moveToPosition(newPosition, *this);
+	auto iter = std::find_if(m_enemies.begin(), m_enemies.end(), [clientID](const auto& player) { return clientID == player->getID(); });
+	assert(iter != m_enemies.end());
+	
+	(*iter)->setPosition(newPosition);
 }
 
-void Level::addPlayer(int clientID, sf::Vector2i startingPosition)
+void Level::addEnemy(int clientID, sf::Vector2i startingPosition)
 {
-	auto cIter = std::find_if(m_players.cbegin(), m_players.cend(), [clientID](const auto& player) { return clientID == player->getID(); });
-	assert(cIter != m_players.cend());
+	auto cIter = std::find_if(m_enemies.cbegin(), m_enemies.cend(), [clientID](const auto& player) { return clientID == player->getID(); });
+	assert(cIter != m_enemies.cend());
 
-	m_players.push_back(std::make_unique<Player>(clientID, EntityType::Player, startingPosition));
+	m_enemies.push_back(std::make_unique<Player>(clientID, EntityType::Player, startingPosition));
 }
 
-void Level::removePlayer(int clientID)
+void Level::removeEnemy(int clientID)
 {
-	auto cIter = std::find_if(m_players.cbegin(), m_players.cend(), [clientID](const auto& player) { return clientID == player->getID(); });
-	assert(cIter != m_players.cend());
-	m_players.erase(cIter);
+	auto cIter = std::find_if(m_enemies.cbegin(), m_enemies.cend(), [clientID](const auto& player) { return clientID == player->getID(); });
+	assert(cIter != m_enemies.cend());
+	
+	m_enemies.erase(cIter);
 }

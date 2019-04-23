@@ -4,6 +4,11 @@
 #include "Timer.h"
 #include <deque>
 
+struct PlayerProperties
+{
+
+};
+
 class Level;
 class Player : public Entity
 {

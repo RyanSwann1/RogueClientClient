@@ -131,7 +131,7 @@ constexpr int CONNECT_TIMEOUT = 5000; //Milliseconds
 //	bool m_connected;
 //};
 
-//TIle sheet to use for world
+//Tile sheet to use for world
 //https://opengameart.org/content/dungeon-tileset
 //Now need a character pack
 
@@ -145,28 +145,35 @@ const std::string levelNames[6]
 	"Level6"
 };
 
+//Level level(LevelParser::parseLevel(levelNames[0]));
+//Selector selector(window, level.getDetails().m_tileSize);
+
+//Receive Game Data Before Game Begins.
+//If not, don't start game - disconnect
+//Introduce time out feature to wait for current state of the map to be sent
+//if exceed time, server time out
+//Then server disconnects client
+
 int main()
 {
+	//Connect to server
 	Client client("121", 199);
-	if (!client.connectToServer())
+	GameState latestGameState;
+	if (!client.connectToServer() && !client.receivedGameState(latestGameState))
 	{
 		std::cout << "Failed to connectToServer.\n";
 		std::cout << "Stopping application.\n";
 		sf::sleep(sf::seconds(2.f));
 		return;
 	}
+	
+	//Load LEvel
+	Level level(LevelParser::parseLevel(latestGameState.m_levelName));
+	level.setGameState(latestGameState);
 
 	sf::RenderWindow window(sf::VideoMode(640, 480), "SFML_WINDOW", sf::Style::Default);
-	
-	//Level level(LevelParser::parseLevel(levelNames[0]));
-	//Selector selector(window, level.getDetails().m_tileSize);
 
-	//Receive Game Data Before Game Begins.
-	//If not, don't start game - disconnect
-	//Introduce time out feature to wait for current state of the map to be sent
-	//if exceed time, server time out
-	//Then server disconnects client
-
+	//Start game looop
 	sf::Event currentEvent;
 	while (window.isOpen())
 	{
@@ -174,7 +181,7 @@ int main()
 		{
 			switch (currentEvent.type)
 			{
-			case sf::Event::Closed :
+			case sf::Event::Closed:
 				window.close();
 				break;
 			}
@@ -185,41 +192,14 @@ int main()
 			//level.getPlayer()->moveToPosition(selector.getPosition(), level);
 		}
 
-		//level.update(0.f);
+		level.update(0.f);
 		window.clear(sf::Color::Black);
-		//level.draw(window);
-	
+		level.draw(window);
+
 	}
-
-	//Disconnect Client From Server
-
-
-	//Client client("192.168.0.14", 5030, level);
-	//if (client.connectToServer())
-	//{		
-	//	while (client.isConnected())
-	//	{
-	//		char d;
-	//		std::cin >> d;
-	//		if (d == 'd')
-	//		{
-	//			client.disconnect();
-	//		}
-	//	}
-	//}
-	//else
-	//{
-	//	std::cout << "Failed to connectToServer.\n";
-	//}
-	      
-	std::cout << "Stopping application.\n";
-	sf::sleep(sf::seconds(2.f));
 	
 	return 0;
 }
-
-//std::thread t(&Client::listen, &client);
-//t.join();
 
 //struct MessageHandler
 //{

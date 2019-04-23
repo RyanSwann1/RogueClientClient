@@ -16,6 +16,11 @@ EntityType Entity::getEntityType() const
 	return m_type;
 }
 
+void Entity::setPosition(sf::Vector2i newPosition)
+{
+	m_currentPosition = newPosition;
+}
+
 void Entity::render(sf::RenderWindow & window) const
 {
 	window.draw(m_sprite);

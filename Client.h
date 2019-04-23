@@ -12,7 +12,7 @@ enum class PacketType
 	Disconnect,
 	HeartBeat,
 	PlayerPosition,
-	CurrentGameState
+	LatestGameState
 };
 
 struct ServerMessage
@@ -39,14 +39,11 @@ public:
 	~Client();
 
 	bool isConnected() const;
-
 	bool receivedGameState(GameState& gameState);
-	getLastReceivedGameState() const;
 
 	bool connectToServer();
 	void disconnect();
 	
-
 private:
 	std::deque<ServerMessage> m_messageQueue;
 	sf::IpAddress m_serverIPAddress;
@@ -60,6 +57,4 @@ private:
 
 	void listenForUDPMessages();
 	void listenForTCPMessages();
-
-	void handleCurrentGameStateMessage(sf::Packet& packet);
 };

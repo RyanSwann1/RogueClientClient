@@ -1,9 +1,7 @@
 #pragma once
 
-#include <string>
-
-class Level;
+struct LevelDetails;
 namespace LevelParser
 {
-	Level parseLevel(const std::string& levelName);
-}
+	LevelDetails parseLevel(const std::string& levelName);
+} 

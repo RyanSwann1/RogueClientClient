@@ -1,12 +1,23 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
 #include <vector>
 #include <string>
-#include <memory>
 
-class Player;
+struct EnemyProperties
+{
+	EnemyProperties(sf::Vector2i position, int ID)
+		: m_position(position),
+		m_ID(ID)
+	{}
+
+	sf::Vector2i m_position;
+	int m_ID;
+};
+
 struct GameState
 {
-
-	std::vector<std::unique_ptr<Player>> m_players;
+	std::string m_levelName;
+	std::vector<EnemyProperties> m_enemies;
+	sf::Vector2i m_playerStartingPosition;
 };

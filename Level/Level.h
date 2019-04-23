@@ -8,23 +8,27 @@
 
 struct LevelDetails
 {
-public:
+	LevelDetails()
+		: m_size(),
+		m_tileSize(0)
+	{}
 	LevelDetails(sf::Vector2i size, int tileSize)
 		: m_size(size),
 		m_tileSize(tileSize)
 	{}
 
-	const sf::Vector2i m_size;
-	const int m_tileSize;
+	sf::Vector2i m_size;
+	int m_tileSize;
 };
 
 struct TileSheet
 {
-	TileSheet(const std::string& name, int tileSize, int columns);
+	TileSheet();
 
 	sf::IntRect getTileLocation(int tileID, int tileSize) const;
+	void setTileSheet(const std::string& textureName, int columns);
 
-	const int m_columns;
+	int m_columns;
 	sf::Texture m_texture;
 };
 
@@ -46,25 +50,27 @@ struct GameState;
 class Level
 {
 public:
-	Level(const LevelDetails& levelDetails, const std::vector<TileLayer>& tileLayer, std::vector<sf::Vector2i>&& collisionLayer);
+	Level();
 
 	const LevelDetails& getDetails() const;
 	const std::vector<TileLayer>& getTileLayer() const;
 	const std::vector<sf::Vector2i>& getCollisionLayer() const;
 	std::unique_ptr<Player>& getPlayer();
 
-	//void setGameState(const )
+	void setGameState(const GameState& latestGameState);
 
-	void draw(sf::RenderWindow& window, const TileSheet& tileSheet) const;
+	void draw(sf::RenderWindow& window) const;
 	void update(float deltaTime);
 
-	void updatePlayerPosition(int clientID, sf::Vector2i newPosition);
-	void addPlayer(int clientID, sf::Vector2i startingPosition);
-	void removePlayer(int clientID);
+	void updateEnemyPosition(int clientID, sf::Vector2i newPosition);
+	void addEnemy(int clientID, sf::Vector2i startingPosition);
+	void removeEnemy(int clientID);
 
 private:
-	const LevelDetails m_details;
-	const std::vector<TileLayer> m_tileLayers;
-	const std::vector<sf::Vector2i> m_collisionLayer;
-	std::vector<std::unique_ptr<Player>> m_players;
+	LevelDetails m_details;
+	std::vector<TileLayer> m_tileLayers;
+	std::vector<sf::Vector2i> m_collisionLayer;
+	TileSheet m_tileSheet;
+	std::unique_ptr<Player> m_player;
+	std::vector<std::unique_ptr<Entity>> m_enemies;
 };

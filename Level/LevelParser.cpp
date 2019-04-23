@@ -1,30 +1,39 @@
 #include "LevelParser.h"
 #include "../Utilities/Base64.h"
 #include "../Utilities/tinyxml.h"
+#include "../LevelDetails.h"
 #include "Level.h"
 #include <vector>
 #include <cassert>
 
-std::vector<TileLayer> parseTileLayers(const TiXmlElement& rootElement, const LevelDetails& levelDetails);
-LevelDetails parseLevelDetails(const TiXmlElement& rootElement);
+std::vector<TileLayer> parseTileLayers(const TiXmlElement& rootElement, std::pair<int, sf::Vector2i> levelDetails);
+std::pair<int, sf::Vector2i> parseLevelDetails(const TiXmlElement& rootElement);
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, sf::Vector2i levelSize);
 std::unordered_map<std::string, TileSheet> parseTileSheets(const TiXmlElement& rootElement);
-std::vector<sf::Vector2f> parseEntityStartingPositions(const TiXmlElement & rootElement, int tileSize);
 std::vector<sf::Vector2i> parseCollisionLayer(const TiXmlElement & rootElement, int tileSize);
 
-Level LevelParser::parseLevel(const std::string& levelName)
+//std::pair<int, sf::Vector2i> m_levelDetails;
+//sf::Vector2i m_size;
+//int m_tileSize;
+//std::vector<TileLayer> m_tileLayers;
+//std::vector<sf::Vector2i> collisionLayer;
+
+LevelDetails::LevelDetails(std::pair<int, sf::Vector2i> details, const std::vector<TileLayer>& tileLayers, const std::vector<sf::Vector2i>& collisionLayers, int tileSize, sf::Vector2i levelSize)
+{
+}
+
+LevelDetails LevelParser::parseLevel(const std::string& levelName)
 {
 	TiXmlDocument mapFile;
 	bool mapLoaded = mapFile.LoadFile(levelName);
 	//assert(mapLoaded);
 
 	const auto& rootElement = mapFile.RootElement();
-	LevelDetails levelDetails = parseLevelDetails(*rootElement);
+	auto levelDetails = parseLevelDetails(*rootElement);
 	std::vector<TileLayer> tileLayers = parseTileLayers(*rootElement, levelDetails);
-	std::vector<sf::Vector2i> collisionLayer = parseCollisionLayer(*rootElement, levelDetails.m_tileSize);
-	std::vector<sf::Vector2f> entityStartingPositions = parseEntityStartingPositions(*rootElement, levelDetails.m_tileSize);
+	std::vector<sf::Vector2i> collisionLayer = parseCollisionLayer(*rootElement, levelDetails.first);
 
-	return Level(levelDetails, tileLayers, std::move(collisionLayer), entityStartingPositions);
+	return LevelDetails(levelDetails, tileLayers, std::move(collisionLayer));
 }
 
 std::vector<sf::Vector2i> parseCollisionLayer(const TiXmlElement & rootElement, int tileSize)
@@ -148,17 +157,21 @@ std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElem
 	return tileData;
 }
 
-LevelDetails parseLevelDetails(const TiXmlElement& rootElement)
+std::pair<int, sf::Vector2i> parseLevelDetails(const TiXmlElement& rootElement)
 {
 	sf::Vector2i levelSize;
 	int tileSize = 0;
 	rootElement.Attribute("width", &levelSize.x);
 	rootElement.Attribute("height", &levelSize.y);
 	rootElement.Attribute("tilewidth", &tileSize);
-	return LevelDetails(levelSize, tileSize);
+	std::pair<int, sf::Vector2i> levelDetails;
+	levelDetails.first = tileSize;
+	levelDetails.second = levelSize;
+
+	return levelDetails;
 }
 
-std::vector<TileLayer> parseTileLayers(const TiXmlElement & rootElement, const LevelDetails& levelDetails)
+std::vector<TileLayer> parseTileLayers(const TiXmlElement & rootElement, std::pair<int, sf::Vector2i> levelDetails)
 {
 	std::vector<TileLayer> tileLayers;
 	for (const auto* tileLayerElement = rootElement.FirstChildElement(); 
@@ -169,7 +182,7 @@ std::vector<TileLayer> parseTileLayers(const TiXmlElement & rootElement, const L
 			continue;
 		}
 
-		auto tileMap = decodeTileLayer(*tileLayerElement, levelDetails.m_size);
+		auto tileMap = decodeTileLayer(*tileLayerElement, levelDetails.second);
 		std::string name = tileLayerElement->Attribute("name");
 		tileLayers.emplace_back(std::move(tileMap), name);
 	}
