@@ -6,46 +6,6 @@
 #include "SFML/Graphics.hpp" 
 #include "../Player.h"
 
-struct LevelDetails
-{
-	LevelDetails()
-		: m_size(),
-		m_tileSize(0)
-	{}
-	LevelDetails(sf::Vector2i size, int tileSize)
-		: m_size(size),
-		m_tileSize(tileSize)
-	{}
-
-	sf::Vector2i m_size;
-	int m_tileSize;
-};
-
-struct TileSheet
-{
-	TileSheet();
-
-	sf::IntRect getTileLocation(int tileID, int tileSize) const;
-	void setTileSheet(const std::string& textureName, int columns);
-
-	int m_columns;
-	sf::Texture m_texture;
-};
-
-class TileLayer
-{
-public:
-	TileLayer(const std::vector<std::vector<int>>& tileLayer, const std::string& tileSheetName);
-
-	const std::vector<std::vector<int>>& getTileLayer() const;
-	const std::string& getName() const;
-	void draw(const TileSheet& tileSheet, sf::RenderWindow& window, const LevelDetails& levelDetails) const;
-
-private:
-	const std::string m_name;
-	const std::vector<std::vector<int>> m_tileLayer;
-};
-
 struct GameState;
 class Level
 {

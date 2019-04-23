@@ -129,6 +129,7 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="LevelDetails.cpp" />
     <ClCompile Include="Level\Level.cpp" />
     <ClCompile Include="Level\LevelParser.cpp" />
     <ClCompile Include="main.cpp" />

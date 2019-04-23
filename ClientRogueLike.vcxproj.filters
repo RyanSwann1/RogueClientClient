@@ -60,6 +60,9 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="LevelDetails.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
