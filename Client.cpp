@@ -22,6 +22,11 @@ Client::~Client()
 	m_listenUDPThread.join();
 }
 
+std::deque<ServerMessage>& Client::getMessageQueue()
+{
+	return m_messageQueue;
+}
+
 bool Client::isConnected() const
 {
 	return m_connected;
@@ -55,12 +60,12 @@ bool Client::receivedLatestGameData(GameState& latestGameState)
 				continue;
 			}
 
-
 			latestGameState.m_levelName = levelName;
 			latestGameState.m_playerStartingPosition = *playerStartingPosition;
 			for (int i = 0; i < enemyPositions->size(); ++i)
 			{
-				latestGameState.m_enemies.emplace_back(enemyPositions[i], enemyIDs[i]);
+				//EnemyProperties(sf::Vector2i position, int ID)
+				latestGameState.m_enemies.emplace_back(&enemyPositions[i], enemyIDs[i]);
 			}
 
 			m_tcpSocket.setBlocking(true);

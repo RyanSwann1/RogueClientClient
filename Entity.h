@@ -9,7 +9,6 @@ enum class EntityType
 	PickUpHealth
 };
 
-class NetworkHandler;
 class Entity
 {
 public:

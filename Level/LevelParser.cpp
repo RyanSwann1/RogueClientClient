@@ -58,9 +58,9 @@ std::vector<sf::Vector2i> parseCollisionLayer(const TiXmlElement & rootElement, 
 	return collidablePositions;
 }
 
-std::vector<sf::Vector2f> parseEntityStartingPositions(const TiXmlElement & rootElement, int tileSize)
+std::vector<sf::Vector2i> parseEntityStartingPositions(const TiXmlElement & rootElement, int tileSize)
 {
-	std::vector<sf::Vector2f> entityStartingPositions;
+	std::vector<sf::Vector2i> entityStartingPositions;
 	for (const auto* entityElementRoot = rootElement.FirstChildElement(); entityElementRoot != nullptr; entityElementRoot = entityElementRoot->NextSiblingElement())
 	{
 		if (entityElementRoot->Value() != std::string("objectgroup") || entityElementRoot->Attribute("name") != std::string("Entity Layer"))
@@ -75,7 +75,7 @@ std::vector<sf::Vector2f> parseEntityStartingPositions(const TiXmlElement & root
 			entityElement->Attribute("y", &startingPosition.y);
 			startingPosition.y -= tileSize; //Tiled Hack
 
-			entityStartingPositions.push_back(sf::Vector2f(startingPosition.x, startingPosition.y));
+			entityStartingPositions.push_back(startingPosition);
 		}
 	}
 
@@ -175,7 +175,7 @@ std::vector<TileLayer> parseTileLayers(const TiXmlElement & rootElement, std::pa
 
 		auto tileMap = decodeTileLayer(*tileLayerElement, levelDetails.second);
 		std::string name = tileLayerElement->Attribute("name");
-		tileLayers.emplace_back(std::move(tileMap), name);
+		tileLayers.emplace_back(std::move(name), std::move(tileMap));
 	}
 
 	assert(!tileLayers.empty());

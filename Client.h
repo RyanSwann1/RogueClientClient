@@ -17,7 +17,7 @@ enum class PacketType
 
 struct ServerMessage
 {
-	ServerMessage(int clientID, PacketType packetType, sf::Vector2f position = sf::Vector2f())
+	ServerMessage(int clientID, PacketType packetType, sf::Vector2i position = sf::Vector2i())
 		: m_clientID(clientID),
 		m_packetType(packetType),
 		m_position(position)
@@ -25,7 +25,7 @@ struct ServerMessage
 
 	int m_clientID;
 	PacketType m_packetType;
-	sf::Vector2f m_position;
+	sf::Vector2i m_position;
 };
 
 class Client
@@ -37,6 +37,8 @@ public:
 	Client(Client&&) = delete;
 	Client&& operator=(Client&&) = delete;
 	~Client();
+
+	std::deque<ServerMessage>& getMessageQueue();
 
 	bool isConnected() const;
 	bool receivedLatestGameData(GameState& gameState);

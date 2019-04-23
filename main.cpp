@@ -141,18 +141,6 @@ constexpr int CONNECT_TIMEOUT = 5000; //Milliseconds
 //https://opengameart.org/content/dungeon-tileset
 //Now need a character pack
 
-const std::string levelNames[6]
-{
-	"Level1",
-	"Level2",
-	"Level3",
-	"Level4",
-	"Level5",
-	"Level6"
-};
-
-
-
 int main()
 {
 	//Connect to server
@@ -163,7 +151,7 @@ int main()
 		std::cout << "Failed to connectToServer.\n";
 		std::cout << "Stopping application.\n";
 		sf::sleep(sf::seconds(2.f));
-		return;
+		return 0;
 	}
 	
 	Level level;
@@ -182,6 +170,13 @@ int main()
 				break;
 			}
 		}
+		
+		for (auto& message : client.getMessageQueue())
+		{
+			level.receiveServerMessage(message);
+		}
+
+		client.getMessageQueue().clear();
 
 		level.update(0.f);
 		window.clear(sf::Color::Black);

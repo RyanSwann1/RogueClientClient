@@ -24,6 +24,11 @@ TileLayer::TileLayer()
 	m_tileLayer()
 {}
 
+TileLayer::TileLayer(std::string && name, std::vector<std::vector<int>>&& tileLayers)
+	: m_name(std::move(name)),
+	m_tileLayer(std::move(tileLayers))
+{}
+
 void TileLayer::draw(sf::RenderWindow& window, const LevelDetails& levelDetails) const
 {
 	for (int y = 0; y < levelDetails.m_levelSize.y; ++y)

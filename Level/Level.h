@@ -18,17 +18,16 @@ public:
 	std::unique_ptr<Player>& getPlayer();
 
 	void setGameState(const GameState& latestGameState);
-
 	void draw(sf::RenderWindow& window) const;
 	void update(float deltaTime);
-
 	void receiveServerMessage(const ServerMessage& serverMessage);
-	void updateEnemyPosition(int clientID, sf::Vector2i newPosition);
-	void addEnemy(int clientID, sf::Vector2i startingPosition);
-	void removeEnemy(int clientID);
 
 private:
 	LevelDetails m_details;
 	std::unique_ptr<Player> m_player;
-	std::vector<std::unique_ptr<Entity>> m_enemies;
+	std::vector<ClientOnServerProperties> m_clientsOnServer;
+
+	void updateClientfromServerPosition(int clientID, sf::Vector2i newPosition);
+	void addClientFromServer(int clientID, sf::Vector2i startingPosition);
+	void removeClientFromServer(int clientID);
 };

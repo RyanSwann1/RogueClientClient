@@ -12,7 +12,7 @@ bool isDestinationReached(sf::Vector2i currentPoint, sf::Vector2i destination);
 
 bool isInBounds(const LevelDetails & levelDetails, int x, int y)
 {
-	return ((y >= 0 && y < levelDetails.m_size.y) && (x >= 0 && x < levelDetails.m_size.x));
+	return ((y >= 0 && y < levelDetails.m_levelSize.y) && (x >= 0 && x < levelDetails.m_levelSize.x));
 }
 
 int getDifferenceBetweenPoints(sf::Vector2i tile, sf::Vector2i source)
@@ -33,7 +33,7 @@ std::deque<sf::Vector2i> getNeighbours(sf::Vector2i source, const Level& level)
 	{
 		for (int x = 0; x <= 2; x += 2)
 		{
-			if (isInBounds(levelDetails, x, y) && !isTileCollidable({ x, y }, level.getCollisionLayer()))
+			if (isInBounds(levelDetails, x, y) && !isTileCollidable({ x, y }, level.getDetails().m_collisionLayer))
 			{
 				neighbours.emplace_back(x, y);
 			}

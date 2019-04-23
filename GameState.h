@@ -4,9 +4,9 @@
 #include <vector>
 #include <string>
 
-struct EnemyProperties
+struct ClientOnServerProperties
 {
-	EnemyProperties(sf::Vector2i position, int ID)
+	ClientOnServerProperties(sf::Vector2i position, int ID)
 		: m_position(position),
 		m_ID(ID)
 	{}
@@ -18,6 +18,6 @@ struct EnemyProperties
 struct GameState
 {
 	std::string m_levelName;
-	std::vector<EnemyProperties> m_enemies;
+	std::vector<ClientOnServerProperties> m_enemies;
 	sf::Vector2i m_playerStartingPosition;
 };

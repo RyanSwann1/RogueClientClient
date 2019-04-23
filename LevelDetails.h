@@ -8,7 +8,6 @@
 struct TileSheet
 {
 	TileSheet();
-	//	tileSheets.emplace(name, TileSheet( source, tileSize, columns ));
 
 	sf::IntRect getTileLocation(int tileID, int tileSize) const;
 	void setTileSheet(const std::string& textureName, int columns);
@@ -21,6 +20,7 @@ struct LevelDetails;
 struct TileLayer
 {
 	TileLayer();
+	TileLayer(std::string&& name, std::vector<std::vector<int>>&& tileLayer);
 
 	void draw(sf::RenderWindow& window, const LevelDetails& levelDetails) const;
 
