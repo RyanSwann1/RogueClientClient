@@ -5,16 +5,15 @@
 #include <unordered_map>
 #include "SFML/Graphics.hpp" 
 #include "../Player.h"
+#include "../LevelDetails.h"
 
 struct GameState;
 class Level
 {
 public:
-	Level();
+	Level(const LevelDetails& levelDetails);
 
 	const LevelDetails& getDetails() const;
-	const std::vector<TileLayer>& getTileLayer() const;
-	const std::vector<sf::Vector2i>& getCollisionLayer() const;
 	std::unique_ptr<Player>& getPlayer();
 
 	void setGameState(const GameState& latestGameState);
@@ -28,9 +27,6 @@ public:
 
 private:
 	LevelDetails m_details;
-	std::vector<TileLayer> m_tileLayers;
-	std::vector<sf::Vector2i> m_collisionLayer;
-	TileSheet m_tileSheet;
 	std::unique_ptr<Player> m_player;
 	std::vector<std::unique_ptr<Entity>> m_enemies;
 };

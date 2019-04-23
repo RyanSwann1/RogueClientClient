@@ -9,18 +9,8 @@
 std::vector<TileLayer> parseTileLayers(const TiXmlElement& rootElement, std::pair<int, sf::Vector2i> levelDetails);
 std::pair<int, sf::Vector2i> parseLevelDetails(const TiXmlElement& rootElement);
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, sf::Vector2i levelSize);
-std::unordered_map<std::string, TileSheet> parseTileSheets(const TiXmlElement& rootElement);
+TileSheet parseTileSheet(const TiXmlElement& rootElement);
 std::vector<sf::Vector2i> parseCollisionLayer(const TiXmlElement & rootElement, int tileSize);
-
-//std::pair<int, sf::Vector2i> m_levelDetails;
-//sf::Vector2i m_size;
-//int m_tileSize;
-//std::vector<TileLayer> m_tileLayers;
-//std::vector<sf::Vector2i> collisionLayer;
-
-LevelDetails::LevelDetails(std::pair<int, sf::Vector2i> details, const std::vector<TileLayer>& tileLayers, const std::vector<sf::Vector2i>& collisionLayers, int tileSize, sf::Vector2i levelSize)
-{
-}
 
 LevelDetails LevelParser::parseLevel(const std::string& levelName)
 {
@@ -32,8 +22,9 @@ LevelDetails LevelParser::parseLevel(const std::string& levelName)
 	auto levelDetails = parseLevelDetails(*rootElement);
 	std::vector<TileLayer> tileLayers = parseTileLayers(*rootElement, levelDetails);
 	std::vector<sf::Vector2i> collisionLayer = parseCollisionLayer(*rootElement, levelDetails.first);
+	TileSheet tileSheet = parseTileSheet(*rootElement);
 
-	return LevelDetails(levelDetails, tileLayers, std::move(collisionLayer));
+	return LevelDetails(tileLayers, tileSheet, std::move(collisionLayer), levelDetails.first, levelDetails.second);
 }
 
 std::vector<sf::Vector2i> parseCollisionLayer(const TiXmlElement & rootElement, int tileSize)
@@ -85,17 +76,15 @@ std::vector<sf::Vector2f> parseEntityStartingPositions(const TiXmlElement & root
 			startingPosition.y -= tileSize; //Tiled Hack
 
 			entityStartingPositions.push_back(sf::Vector2f(startingPosition.x, startingPosition.y));
-			//entityStartingPositions.
-			
 		}
 	}
 
 	return entityStartingPositions;
 }
 
-std::unordered_map<std::string, TileSheet> parseTileSheets(const TiXmlElement& rootElement)
+TileSheet parseTileSheet(const TiXmlElement& rootElement)
 {
-	std::unordered_map<std::string, TileSheet> tileSheets;
+	TileSheet tileSheet;
 	for (const auto* tileSheetElement = rootElement.FirstChildElement();
 		tileSheetElement != nullptr; tileSheetElement = tileSheetElement->NextSiblingElement())
 	{
@@ -112,11 +101,13 @@ std::unordered_map<std::string, TileSheet> parseTileSheets(const TiXmlElement& r
 		tileSheetElement->FirstChildElement()->Attribute("height", &size.y);
 		tileSheetElement->Attribute("tilewidth", &tileSize);
 		int columns = size.x / tileSize;
-		tileSheets.emplace(name, TileSheet( source, tileSize, columns ));
+		
+		
+		tileSheet.setTileSheet(name, columns);
+		
 	}
 
-	//assert(!tileSheets.empty());
-	return tileSheets;
+	return tileSheet;
 }
 
 std::vector<std::vector<int>> decodeTileLayer(const TiXmlElement & tileLayerElement, sf::Vector2i levelSize)

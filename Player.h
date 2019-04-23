@@ -4,11 +4,6 @@
 #include "Timer.h"
 #include <deque>
 
-struct PlayerProperties
-{
-
-};
-
 class Level;
 class Player : public Entity
 {
@@ -23,17 +18,3 @@ private:
 	std::deque<sf::Vector2i> m_pathToTile;
 	Timer m_movementTimer;
 };
-
-//
-//#include "SFML/Graphics.hpp"
-//
-//struct Player
-//{
-//	Player(int clientID, sf::Vector2f startingPosition)
-//		: m_clientID(clientID),
-//		m_position(startingPosition)
-//	{}
-//
-//	int m_clientID;
-//	sf::Vector2f m_position;
-//};

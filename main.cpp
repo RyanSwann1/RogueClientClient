@@ -167,7 +167,7 @@ int main()
 		return;
 	}
 	
-	//Load LEvel
+	//Load Level
 	Level level(LevelParser::parseLevel(latestGameState.m_levelName));
 	level.setGameState(latestGameState);
 
