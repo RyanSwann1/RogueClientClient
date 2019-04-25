@@ -144,7 +144,7 @@ constexpr int CONNECT_TIMEOUT = 5000; //Milliseconds
 int main()
 {
 	//Connect to server
-	Client client("121", 199);
+	Client client("152.105.219.105", 5030);
 	GameState latestGameState;
 	if (!client.connectToServer() && !client.receivedLatestGameData(latestGameState))
 	{

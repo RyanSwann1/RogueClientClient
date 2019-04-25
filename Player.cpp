@@ -6,9 +6,7 @@ Player::Player(int entityID, EntityType entityType, sf::Vector2i startingPositio
 	m_movementPoints(5),
 	m_pathToTile(),
 	m_movementTimer(1.5f)
-{
-
-}
+{}
 
 void Player::update(float deltaTime)
 {

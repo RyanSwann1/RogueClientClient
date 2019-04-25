@@ -12,7 +12,8 @@ enum class PacketType
 	Disconnect,
 	HeartBeat,
 	PlayerPosition,
-	LatestGameState
+	LatestGameState,
+	NewProjectile
 };
 
 struct ServerMessage

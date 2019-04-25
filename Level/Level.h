@@ -6,13 +6,18 @@
 #include "SFML/Graphics.hpp" 
 #include "../Player.h"
 #include "../LevelDetails.h"
+#include "../GameState.h"
 
 struct ServerMessage;
-struct GameState;
+
 class Level
 {
 public:
 	Level();
+	Level(const Level&) = delete;
+	Level& operator=(const Level&) = delete;
+	Level(Level&&) = delete;
+	Level&& operator=(Level&&) = delete;
 
 	const LevelDetails& getDetails() const;
 	std::unique_ptr<Player>& getPlayer();
