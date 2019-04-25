@@ -29,4 +29,5 @@ struct GameState
 	std::string m_levelName;
 	std::vector<ClientOnServerProperties> m_enemies;
 	sf::Vector2i m_playerStartingPosition;
+	int m_clientID;
 };

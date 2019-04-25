@@ -5,7 +5,7 @@ constexpr int CONNECT_TIMEOUT = 5000; //Milliseconds
 constexpr int RECEIVE_GAME_DATA_TIMEOUT = 5000; // Milliseconds
 constexpr int INVALID_CLIENT_ID = -1;
 
-Client::Client(sf::IpAddress serverIPAddress, unsigned short serverPortNumber)
+Client::Client(const sf::IpAddress& serverIPAddress, unsigned short serverPortNumber)
 	: m_serverIPAddress(serverIPAddress),
 	m_tcpSocket(),
 	m_udpSocket(),
@@ -14,7 +14,9 @@ Client::Client(sf::IpAddress serverIPAddress, unsigned short serverPortNumber)
 	m_serverPortNumber(serverPortNumber),
 	m_connected(false),
 	m_clientID(INVALID_CLIENT_ID)
-{}
+{
+	int  i = 0;
+}
 
 Client::~Client()
 {
@@ -121,16 +123,7 @@ bool Client::connectToServer()
 		{
 			continue;
 		}
-			
-		//Establish UDP connection
-		if (m_udpSocket.bind(m_serverPortNumber, m_serverIPAddress) != sf::Socket::Done)
-		{
-			std::cout << "Couldn't bind client to port.\n";
-			return false;
-		}
-			
-		//Send back player starting position
-			
+
 		m_clientID = clientID;
 		m_connected = true;
 		m_udpSocket.setBlocking(true);
