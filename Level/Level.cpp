@@ -27,7 +27,7 @@ void Level::setGameState(const GameState & latestGameState)
 {
 	for (auto& enemyInfo : latestGameState.m_enemies)
 	{
-		m_clientsOnServer.emplace_back(enemyInfo.m_ID, enemyInfo.m_position);
+		m_clientsOnServer.emplace_back(enemyInfo.m_position, enemyInfo.m_ID);
 	}
 
 	m_details = LevelParser::parseLevel(latestGameState.m_levelName);
@@ -45,7 +45,7 @@ void Level::draw(sf::RenderWindow& window) const
 
 	for (const auto& enemy : m_clientsOnServer)
 	{
-		enemy->render(window);
+		window.draw(enemy.m_sprite);
 	}
 }
 
@@ -69,23 +69,22 @@ void Level::receiveServerMessage(const ServerMessage & serverMessage)
 
 void Level::updateClientfromServerPosition(int clientID, sf::Vector2i newPosition)
 {
-	auto iter = std::find_if(m_clientsOnServer.begin(), m_clientsOnServer.end(), [clientID](const auto& player) { return clientID == player->getID(); });
+	auto iter = std::find_if(m_clientsOnServer.begin(), m_clientsOnServer.end(), [clientID](const auto& player) { return clientID == player.m_ID; });
 	assert(iter != m_clientsOnServer.end());
-	
-	(*iter)->setPosition(newPosition);
+	iter->m_position = newPosition;
 }
 
 void Level::addClientFromServer(int clientID, sf::Vector2i startingPosition)
 {
-	auto cIter = std::find_if(m_clientsOnServer.cbegin(), m_clientsOnServer.cend(), [clientID](const auto& player) { return clientID == player->getID(); });
+	auto cIter = std::find_if(m_clientsOnServer.cbegin(), m_clientsOnServer.cend(), [clientID](const auto& player) { return clientID == player.m_ID; });
 	assert(cIter != m_clientsOnServer.cend());
 
-	m_clientsOnServer.push_back(std::make_unique<Player>(clientID, EntityType::Player, startingPosition));
+	m_clientsOnServer.emplace_back(startingPosition, clientID);
 }
 
 void Level::removeClientFromServer(int clientID)
 {
-	auto cIter = std::find_if(m_clientsOnServer.cbegin(), m_clientsOnServer.cend(), [clientID](const auto& player) { return clientID == player->getID(); });
+	auto cIter = std::find_if(m_clientsOnServer.cbegin(), m_clientsOnServer.cend(), [clientID](const auto& player) { return clientID == player.m_ID; });
 	assert(cIter != m_clientsOnServer.cend());
 	
 	m_clientsOnServer.erase(cIter);

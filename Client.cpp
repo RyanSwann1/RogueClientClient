@@ -64,11 +64,14 @@ bool Client::receivedLatestGameData(GameState& latestGameState)
 			latestGameState.m_playerStartingPosition = *playerStartingPosition;
 			for (int i = 0; i < enemyPositions->size(); ++i)
 			{
-				//EnemyProperties(sf::Vector2i position, int ID)
-				latestGameState.m_enemies.emplace_back(&enemyPositions[i], enemyIDs[i]);
+				//	ClientOnServerProperties(sf::Vector2i position, int ID)
+				sf::Vector2i enemyStartingPosition = enemyPositions->at(i);
+				int enemyID = enemyIDs->at(i);
+				latestGameState.m_enemies.emplace_back(enemyStartingPosition, enemyID);
 			}
 
 			m_tcpSocket.setBlocking(true);
+			std::cout << "Connected to server\n";
 			return true;
 		}
 		else
@@ -100,9 +103,11 @@ bool Client::connectToServer()
 	m_udpSocket.setBlocking(false);
 	sf::Clock serverConnectTimer;
 	serverConnectTimer.restart();
-
-	while (serverConnectTimer.getElapsedTime().asMilliseconds() < CONNECT_TIMEOUT)
+	sf::Clock timer;
+	float elaspedTime = 0;
+	while (!m_connected)
 	{
+		elaspedTime += timer.restart().asSeconds();
 		if (m_tcpSocket.receive(packet) != sf::Socket::Done)
 		{
 			continue;
@@ -134,6 +139,8 @@ bool Client::connectToServer()
 		m_listenTCPThread = std::thread(&Client::listenForTCPMessages, this);
 		return true;
 	}
+
+	return false;
 }
 
 void Client::disconnect()
@@ -170,7 +177,7 @@ void Client::listenForUDPMessages()
 		{
 		case PacketType::PlayerPosition :
 			packet >> clientID >> packetType >> newPosition.x >> newPosition.y;
-			m_messageQueue.emplace_back(clientID, packetType, newPosition);
+			m_messageQueue.emplace_back(clientID, static_cast<PacketType>(packetType), newPosition);
 			break;
 		}
 	}

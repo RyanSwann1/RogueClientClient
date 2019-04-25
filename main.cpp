@@ -144,9 +144,9 @@ constexpr int CONNECT_TIMEOUT = 5000; //Milliseconds
 int main()
 {
 	//Connect to server
-	Client client("152.105.219.105", 5030);
+	Client client("152.105.219.109", 5030);
 	GameState latestGameState;
-	if (!client.connectToServer() && !client.receivedLatestGameData(latestGameState))
+	if (!client.connectToServer() || !client.receivedLatestGameData(latestGameState))
 	{
 		std::cout << "Failed to connectToServer.\n";
 		std::cout << "Stopping application.\n";
