@@ -12,8 +12,9 @@ enum class PacketType
 	Disconnect,
 	HeartBeat,
 	PlayerPosition,
-	LatestGameState,
-	NewProjectile
+	LatestGameData,
+	LatestLevelName,
+	LatestClientPositions
 };
 
 struct ServerMessage
@@ -42,7 +43,7 @@ public:
 	std::deque<ServerMessage>& getMessageQueue();
 
 	bool isConnected() const;
-	bool receivedLatestGameData(GameState& gameState);
+	//bool receivedLatestGameData(GameState& gameState);
 
 	bool connectToServer();
 	void disconnect();

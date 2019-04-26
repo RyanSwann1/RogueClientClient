@@ -2,7 +2,7 @@
 #include <iostream>
 
 constexpr int CONNECT_TIMEOUT = 5; //Seconds
-constexpr int RECEIVE_GAME_DATA_TIMEOUT = 5; //Seconds
+constexpr int RECEIVE_ALL_GAME_DATA = 5; //Seconds
 constexpr int INVALID_CLIENT_ID = -1;
 
 Client::Client(sf::IpAddress serverIPAddress, unsigned short serverPortNumber)
@@ -34,58 +34,58 @@ bool Client::isConnected() const
 	return m_connected;
 }
 
-bool Client::receivedLatestGameData(GameState& latestGameState)
-{
-	sf::Clock timer;
-	float elaspedTime = 0;
-	m_tcpSocket.setBlocking(false);
-	char data[150000];
-	size_t received;
-	while (elaspedTime <= RECEIVE_GAME_DATA_TIMEOUT)
-	{
-		elaspedTime += timer.restart().asSeconds();
-		if (m_tcpSocket.receive(data, 150000, received) != sf::Socket::Done)
-		{
-			continue;
-		}
-
-		PacketType packetType = (PacketType)data[0];
-		if (packetType == PacketType::LatestGameState)
-		{
-			std::string levelName = (std::string)&data[sizeof(packetType)];
-			sf::Vector2i* playerStartingPosition = (sf::Vector2i*)&data[sizeof(packetType) + sizeof(levelName)];
-			std::vector<sf::Vector2i>* enemyPositions = (std::vector<sf::Vector2i>*)&data[sizeof(packetType) + sizeof(levelName)];
-			std::vector<int>* enemyIDs = (std::vector<int>*)&data[sizeof(packetType) + sizeof(levelName) + sizeof(enemyPositions)];
-
-			if (enemyPositions->size() != enemyIDs->size())
-			{
-				continue;
-			}
-
-			latestGameState.m_levelName = levelName;
-			latestGameState.m_playerStartingPosition = *playerStartingPosition;
-			for (int i = 0; i < enemyPositions->size(); ++i)
-			{
-				//	ClientOnServerProperties(sf::Vector2i position, int ID)
-				sf::Vector2i enemyStartingPosition = enemyPositions->at(i);
-				int enemyID = enemyIDs->at(i);
-				latestGameState.m_enemies.emplace_back(enemyStartingPosition, enemyID);
-			}
-
-			m_tcpSocket.setBlocking(true);
-			std::cout << "Connected to server\n";
-			return true;
-		}
-		else
-		{
-			m_tcpSocket.setBlocking(true);
-			break;
-		}
-	}
-
-	m_tcpSocket.setBlocking(true);
-	return false;
-}
+//bool Client::receivedLatestGameData(GameState& latestGameState)
+//{
+//	sf::Clock timer;
+//	float elaspedTime = 0;
+//	m_tcpSocket.setBlocking(false);
+//	char data[150000];
+//	size_t received;
+//	while (elaspedTime <= RECEIVE_ALL_GAME_DATA)
+//	{
+//		elaspedTime += timer.restart().asSeconds();
+//		if (m_tcpSocket.receive(data, 150000, received) != sf::Socket::Done)
+//		{
+//			continue;
+//		}
+//
+//		PacketType packetType = (PacketType)data[0];
+//		if (packetType == PacketType::LatestGameData)
+//		{
+//			std::string levelName = (std::string)&data[sizeof(packetType)];
+//			sf::Vector2i* playerStartingPosition = (sf::Vector2i*)&data[sizeof(packetType) + sizeof(levelName)];
+//			std::vector<sf::Vector2i>* enemyPositions = (std::vector<sf::Vector2i>*)&data[sizeof(packetType) + sizeof(levelName)];
+//			std::vector<int>* enemyIDs = (std::vector<int>*)&data[sizeof(packetType) + sizeof(levelName) + sizeof(enemyPositions)];
+//
+//			if (enemyPositions->size() != enemyIDs->size())
+//			{
+//				continue;
+//			}
+//
+//			latestGameState.m_levelName = levelName;
+//			latestGameState.m_playerStartingPosition = *playerStartingPosition;
+//			for (int i = 0; i < enemyPositions->size(); ++i)
+//			{
+//				//	ClientOnServerProperties(sf::Vector2i position, int ID)
+//				sf::Vector2i enemyStartingPosition = enemyPositions->at(i);
+//				int enemyID = enemyIDs->at(i);
+//				latestGameState.m_enemies.emplace_back(enemyStartingPosition, enemyID);
+//			}
+//
+//			m_tcpSocket.setBlocking(true);
+//			std::cout << "Connected to server\n";
+//			return true;
+//		}
+//		else
+//		{
+//			m_tcpSocket.setBlocking(true);
+//			break;
+//		}
+//	}
+//
+//	m_tcpSocket.setBlocking(true);
+//	return false;
+//}
 
 bool Client::connectToServer()
 {
@@ -105,48 +105,63 @@ bool Client::connectToServer()
 	m_udpSocket.setBlocking(false);
 	sf::Clock timer;
 	float elaspedTime = 0;
-	char data[1500];
-	size_t dataReceived;
 	while (elaspedTime < CONNECT_TIMEOUT)
 	{
 		elaspedTime += timer.restart().asSeconds();
-		if (m_tcpSocket.receive(data, 1500, dataReceived) != sf::Socket::Done)
+		if (m_tcpSocket.receive(packet) != sf::Socket::Done)
 		{
 			continue;
 		}
-			
-		std::string levelName = std::string(&data[0], sizeof(&data[0]));
-		std::vector<int>* ID = (std::vector<int>*)&data[39];
-		int i = data[41];
+		int packetType = 0;
+		packet >> packetType;
+		if (static_cast<PacketType>(packetType) == PacketType::LatestLevelName)
+		{
+			std::string levelName;
+			packet >> levelName;
+			std::cout << levelName << "\n";
+			packet.clear();
+		}
+		else if (static_cast<PacketType>(packetType) == PacketType::LatestClientPositions)
+		{
+			int clientID = 0;
+			sf::Vector2i position;
+			packet >> clientID >> position.x >> position.y;
+			std::cout << clientID << "  " << position.x << " " << position.y << "\n";
+			packet.clear();
+		}
 
+		//if (m_tcpSocket.receive(data, 1500, dataReceived) != sf::Socket::Done)
+		//{
+		//	continue;
+		//}
+		//	
+		//std::string levelName = std::string(&data[0], sizeof(&data[0]));
+		//std::vector<int>* ID = (std::vector<int>*)&data[39];
+		//int i = data[41];
 		//std::vector<sf::Vector2i>* enemyPositions = (std::vector<sf::Vector2i>*)&data[sizeof(packetType) + sizeof(levelName)];
 		//for (int i = data[sizeof(data[0])]; i < sizeof(&data[sizeof(&data[0])]); ++i)
 		//{
 		//	ID.push_back(data[i]);
 		//}
-
 		//std::vector<sf::Vector2i>* enemyPositions = (std::vector<sf::Vector2i>*)&data[sizeof(packetType) + sizeof(levelName)];
-		
 	//	int i = 0;
-		//Get Client ID from Server
-		int packetType = 0;
-		int clientID = INVALID_CLIENT_ID;
-		packet >> packetType >> clientID;			
-		if (static_cast<PacketType>(packetType) != PacketType::Connect)
-		{
-			continue;
-		}
-		
-		m_clientID = clientID;
-		m_connected = true;
-		m_udpSocket.setBlocking(true);
-		std::cout << "Client Connected To Server\n";
-		m_listenUDPThread = std::thread(&Client::listenForUDPMessages, this);
-		m_listenTCPThread = std::thread(&Client::listenForTCPMessages, this);
-		return true;
+		////Get Client ID from Server
+		//int packetType = 0;
+		////int clientID = INVALID_CLIENT_ID;
+		//packet >> packetType >> clientID;			
+		//if (static_cast<PacketType>(packetType) != PacketType::Connect)
+		//{
+		//	continue;
+		//}	
+		//m_clientID = clientID;
 	}
 
-	return false;
+	m_connected = true;
+	m_udpSocket.setBlocking(true);
+	std::cout << "Client Connected To Server\n";
+	m_listenUDPThread = std::thread(&Client::listenForUDPMessages, this);
+	m_listenTCPThread = std::thread(&Client::listenForTCPMessages, this);
+	return true;
 }
 
 void Client::disconnect()
@@ -210,7 +225,7 @@ void Client::listenForTCPMessages()
 		case PacketType::Disconnect :
 			//Handle player disconnection
 			break;
-		case PacketType::LatestGameState :
+		case PacketType::LatestGameData :
 			break;
 		}
 	}
