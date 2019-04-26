@@ -15,6 +15,76 @@ constexpr int CONNECT_TIMEOUT = 5000; //Milliseconds
 //if exceed time, server time out
 //Then server disconnects client
 
+
+
+//Tile sheet to use for world
+//https://opengameart.org/content/dungeon-tileset
+//Now need a character pack
+
+int main()
+{
+	sf::Clock clock;
+	float elaspedTime = 0;
+
+	//Connect to server
+	sf::IpAddress serverIP("152.105.219.108");
+	Client client(serverIP, 5030);
+	GameState latestGameState;
+	if (!client.connectToServer())
+	{
+		std::cout << "Failed to connectToServer.\n";
+		std::cout << "Stopping application.\n";
+		sf::sleep(sf::seconds(2.f));
+		return 0;
+	}
+	if (!client.receivedLatestGameData(latestGameState))
+	{
+		std::cout << "Failed to connectToServer.\n";
+		std::cout << "Stopping application.\n";
+		sf::sleep(sf::seconds(2.f));
+		return 0;
+	}
+
+	//if (!client.connectToServer() || !client.receivedLatestGameData(latestGameState))
+	//{
+	//	std::cout << "Failed to connectToServer.\n";
+	//	std::cout << "Stopping application.\n";
+	//	sf::sleep(sf::seconds(2.f));
+	//	return 0;    
+	//}
+	
+	Level level;
+	level.setGameState(latestGameState);
+
+	sf::RenderWindow window(sf::VideoMode(640, 480), "SFML_WINDOW", sf::Style::Default);
+	sf::Event currentEvent;
+	while (window.isOpen())
+	{
+		while (window.pollEvent(currentEvent))
+		{
+			switch (currentEvent.type)
+			{
+			case sf::Event::Closed:
+				window.close();
+				break;
+			}
+		}
+		
+		for (auto& message : client.getMessageQueue())
+		{
+			level.receiveServerMessage(message);
+		}
+
+		client.getMessageQueue().clear();
+
+		level.update(0.f);
+		window.clear(sf::Color::Black);
+		level.draw(window);
+	}
+	
+	return 0;
+}
+
 //struct Client
 //{
 //	Client(std::string ipAddress, unsigned short port)
@@ -136,56 +206,6 @@ constexpr int CONNECT_TIMEOUT = 5000; //Milliseconds
 //	int m_clientID; //Assigned by the server
 //	bool m_connected;
 //};
-
-//Tile sheet to use for world
-//https://opengameart.org/content/dungeon-tileset
-//Now need a character pack
-
-int main()
-{
-	//Connect to server
-	sf::IpAddress serverIP("152.105.219.109");
-	Client client(serverIP, 5030);
-	GameState latestGameState;
-	if (!client.connectToServer() || !client.receivedLatestGameData(latestGameState))
-	{
-		std::cout << "Failed to connectToServer.\n";
-		std::cout << "Stopping application.\n";
-		sf::sleep(sf::seconds(2.f));
-		return 0;    
-	}
-	
-	Level level;
-	level.setGameState(latestGameState);
-
-	sf::RenderWindow window(sf::VideoMode(640, 480), "SFML_WINDOW", sf::Style::Default);
-	sf::Event currentEvent;
-	while (window.isOpen())
-	{
-		while (window.pollEvent(currentEvent))
-		{
-			switch (currentEvent.type)
-			{
-			case sf::Event::Closed:
-				window.close();
-				break;
-			}
-		}
-		
-		for (auto& message : client.getMessageQueue())
-		{
-			level.receiveServerMessage(message);
-		}
-
-		client.getMessageQueue().clear();
-
-		level.update(0.f);
-		window.clear(sf::Color::Black);
-		level.draw(window);
-	}
-	
-	return 0;
-}
 
 //struct MessageHandler
 //{

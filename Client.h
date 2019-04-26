@@ -32,7 +32,7 @@ struct ServerMessage
 class Client
 {
 public:
-	Client(const sf::IpAddress& serverIPAddress, unsigned short serverPortNumber);
+	Client(sf::IpAddress serverIPAddress, unsigned short serverPortNumber);
 	Client(Client&) = delete;
 	Client& operator=(Client&) = delete;
 	Client(Client&&) = delete;

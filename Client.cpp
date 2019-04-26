@@ -1,11 +1,11 @@
 #include "Client.h"
 #include <iostream>
 
-constexpr int CONNECT_TIMEOUT = 5000; //Milliseconds
-constexpr int RECEIVE_GAME_DATA_TIMEOUT = 5000; // Milliseconds
+constexpr int CONNECT_TIMEOUT = 5; //Seconds
+constexpr int RECEIVE_GAME_DATA_TIMEOUT = 5; //Seconds
 constexpr int INVALID_CLIENT_ID = -1;
 
-Client::Client(const sf::IpAddress& serverIPAddress, unsigned short serverPortNumber)
+Client::Client(sf::IpAddress serverIPAddress, unsigned short serverPortNumber)
 	: m_serverIPAddress(serverIPAddress),
 	m_tcpSocket(),
 	m_udpSocket(),
@@ -15,7 +15,7 @@ Client::Client(const sf::IpAddress& serverIPAddress, unsigned short serverPortNu
 	m_connected(false),
 	m_clientID(INVALID_CLIENT_ID)
 {
-	int  i = 0;
+
 }
 
 Client::~Client()
@@ -43,7 +43,7 @@ bool Client::receivedLatestGameData(GameState& latestGameState)
 	size_t received;
 	while (elaspedTime <= RECEIVE_GAME_DATA_TIMEOUT)
 	{
-		elaspedTime += timer.restart().asMilliseconds();
+		elaspedTime += timer.restart().asSeconds();
 		if (m_tcpSocket.receive(data, 150000, received) != sf::Socket::Done)
 		{
 			continue;
@@ -103,18 +103,31 @@ bool Client::connectToServer()
 
 	sf::Packet packet;
 	m_udpSocket.setBlocking(false);
-	sf::Clock serverConnectTimer;
-	serverConnectTimer.restart();
 	sf::Clock timer;
 	float elaspedTime = 0;
-	while (!m_connected)
+	char data[1500];
+	size_t dataReceived;
+	while (elaspedTime < CONNECT_TIMEOUT)
 	{
 		elaspedTime += timer.restart().asSeconds();
-		if (m_tcpSocket.receive(packet) != sf::Socket::Done)
+		if (m_tcpSocket.receive(data, 1500, dataReceived) != sf::Socket::Done)
 		{
 			continue;
 		}
 			
+		std::string levelName = std::string(&data[0], sizeof(&data[0]));
+		std::vector<int>* ID = (std::vector<int>*)&data[39];
+		int i = data[41];
+
+		//std::vector<sf::Vector2i>* enemyPositions = (std::vector<sf::Vector2i>*)&data[sizeof(packetType) + sizeof(levelName)];
+		//for (int i = data[sizeof(data[0])]; i < sizeof(&data[sizeof(&data[0])]); ++i)
+		//{
+		//	ID.push_back(data[i]);
+		//}
+
+		//std::vector<sf::Vector2i>* enemyPositions = (std::vector<sf::Vector2i>*)&data[sizeof(packetType) + sizeof(levelName)];
+		
+	//	int i = 0;
 		//Get Client ID from Server
 		int packetType = 0;
 		int clientID = INVALID_CLIENT_ID;
@@ -123,7 +136,7 @@ bool Client::connectToServer()
 		{
 			continue;
 		}
-
+		
 		m_clientID = clientID;
 		m_connected = true;
 		m_udpSocket.setBlocking(true);
