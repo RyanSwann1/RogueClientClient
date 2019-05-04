@@ -61,7 +61,7 @@ void Level::receiveServerMessage(const ServerMessage & serverMessage)
 	case PacketType::PlayerPosition :
 		updateClientfromServerPosition(serverMessage.m_clientID, serverMessage.m_position);
 		break;
-	case PacketType::Disconnect :
+	case PacketType::RemoteClientDisconnection :
 		removeClientFromServer(serverMessage.m_clientID);
 		break;
 	}

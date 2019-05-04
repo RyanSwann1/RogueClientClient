@@ -1,4 +1,4 @@
-#include "Client.h"
+#include "NetworkHandler.h"
 #include "Level/Level.h"
 #include "Level/LevelParser.h"
 #include "Selector.h"
@@ -28,33 +28,16 @@ int main()
 
 	//Connect to server
 	sf::IpAddress serverIP("152.105.219.108");
-	Client client(serverIP, 5030);
-	GameState latestGameState;
+	NetworkHandler client(serverIP, 5030, "Client1");
+	//GameState latestGameState;
 	if (!client.connectToServer())
 	{
 		std::cout << "Failed to connectToServer.\n";
 		std::cout << "Stopping application.\n";
 		sf::sleep(sf::seconds(2.f));
-		return 0;
-	}
-	if (!client.receivedLatestGameData(latestGameState))
-	{
-		std::cout << "Failed to connectToServer.\n";
-		std::cout << "Stopping application.\n";
-		sf::sleep(sf::seconds(2.f));
-		return 0;
+		return -1;
 	}
 
-	//if (!client.connectToServer() || !client.receivedLatestGameData(latestGameState))
-	//{
-	//	std::cout << "Failed to connectToServer.\n";
-	//	std::cout << "Stopping application.\n";
-	//	sf::sleep(sf::seconds(2.f));
-	//	return 0;    
-	//}
-	
-	Level level;
-	level.setGameState(latestGameState);
 
 	sf::RenderWindow window(sf::VideoMode(640, 480), "SFML_WINDOW", sf::Style::Default);
 	sf::Event currentEvent;
@@ -70,16 +53,10 @@ int main()
 			}
 		}
 		
-		for (auto& message : client.getMessageQueue())
-		{
-			level.receiveServerMessage(message);
-		}
 
 		client.getMessageQueue().clear();
 
-		level.update(0.f);
 		window.clear(sf::Color::Black);
-		level.draw(window);
 	}
 	
 	return 0;
